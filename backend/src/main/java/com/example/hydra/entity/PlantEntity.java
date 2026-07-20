@@ -33,7 +33,7 @@ public class PlantEntity {
   private Integer minMoistureLevel; 
 
   @Column(name = "max_moisture_level")
-  private Integer maxMoistueLevel;
+  private Integer maxMoistureLevel;
   
   //pico id - one pico/plant
   @Column(name = "device_id", nullable = false)
@@ -87,12 +87,12 @@ public class PlantEntity {
     this.minMoistureLevel = minMoistureLevel;
   }
 
-  public Integer getMaxMoistueLevel() {
-    return maxMoistueLevel;
+  public Integer getMaxMoistureLevel() {
+    return maxMoistureLevel;
   }
 
-  public void setMaxMoistueLevel(Integer maxMoistueLevel) {
-    this.maxMoistueLevel = maxMoistueLevel;
+  public void setMaxMoistureLevel(Integer maxMoistureLevel) {
+    this.maxMoistureLevel = maxMoistureLevel;
   }
 
   public String getDeviceId() {

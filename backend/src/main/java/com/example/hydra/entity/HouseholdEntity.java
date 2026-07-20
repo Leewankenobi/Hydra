@@ -10,7 +10,7 @@ public class HouseholdEntity {
   // 'property' in schema -> java object attribute 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
-  private UUID housholdId;
+  private UUID householdId;
 
   @Column (name = "name")
   private String housesholdName;
@@ -19,16 +19,19 @@ public class HouseholdEntity {
     Uses the 'household' field in PlantEntity to determine
     which plants belong to this household. 
     Cascade operations (save, update, delete) to all associated plants*/
-    
+
   @OneToMany(mappedBy = "household", cascade = CascadeType.ALL)
   private List<PlantEntity> plants; 
+  // keep a list of all users
+  @OneToMany(mappedBy = "houshold", cascade = CascadeType.ALL)
+  private List<UserEntity> users; 
 
   public UUID getHousholdId() {
-    return housholdId;
+    return householdId;
   }
 
   public void setHousholdId(UUID housholdId) {
-    this.housholdId = housholdId;
+    this.householdId = housholdId;
   }
 
   public String getHousesholdName() {
@@ -43,9 +46,33 @@ public class HouseholdEntity {
     return plants;
   }
 
-  public void setPlants(List<PlantEntity> plants) {
-    this.plants = plants;
+  public PlantEntity addPlant(PlantEntity p) {
+    plants.add(p);
+    p.setHousehold(this); 
+    return p; 
   }
 
- 
+   public PlantEntity removePlant(PlantEntity p) {
+    plants.remove(p);
+    p.setHousehold(null); 
+    return p; 
+  }
+
+   public List<UserEntity> getUsers() {
+    return users;
+    
+  }
+
+  public UserEntity addUser(UserEntity u) {
+    users.add(u);
+    u.setHousehold(this); 
+    return u;
+  }
+
+    public UserEntity removeUser(UserEntity u) {
+    users.remove(u);
+    u.setHousehold(null); 
+    return u;
+  }  
+  
 }

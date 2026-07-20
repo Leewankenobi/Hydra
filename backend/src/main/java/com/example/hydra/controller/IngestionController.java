@@ -1,6 +1,6 @@
 package com.example.hydra.controller;
 
-import com.example.hydra.dto.sensorData;
+import com.example.hydra.dto.SensorData;
 import com.example.hydra.service.sensorDataService;
 
 import org.springframework.http.HttpStatus;
