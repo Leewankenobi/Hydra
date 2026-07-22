@@ -62,3 +62,4 @@ public class ReadingEntity {
     this.moisture_reading = moisture_reading;
   }
 }
+ 
