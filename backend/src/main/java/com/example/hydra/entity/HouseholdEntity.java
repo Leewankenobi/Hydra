@@ -9,7 +9,7 @@ import java.util.List;
 public class HouseholdEntity {
   // 'property' in schema -> java object attribute 
   @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
+  @GeneratedValue(strategy = GenerationType.UUID) 
   private UUID householdId;
 
   @Column (name = "name")
@@ -23,7 +23,7 @@ public class HouseholdEntity {
   @OneToMany(mappedBy = "household", cascade = CascadeType.ALL)
   private List<PlantEntity> plants; 
   // keep a list of all users
-  @OneToMany(mappedBy = "houshold", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "household", cascade = CascadeType.ALL) //#
   private List<UserEntity> users; 
 
   public UUID getHousholdId() {

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class SensorData {
 
   @JsonProperty("plant_id")
-  private String plantId;
+  private UUID plantId;
 
   @JsonProperty("moisture")
   private Integer moistureLevel;
@@ -19,11 +19,11 @@ public class SensorData {
   public SensorData() {
   }
 
-  public String getplantId() {
+  public UUID getPlantId() {
     return plantId;
   }
 
-  public void setplantId(String plantId) {
+  public void setPlantId(UUID plantId) {
     this.plantId = plantId;
   }
 
@@ -41,5 +41,9 @@ public class SensorData {
 
   public void setTemperature(Double temperature) {
     this.temperature = temperature;
+  }
+
+  public String toString() {
+    return " Plant ID: " + getPlantId() + " Mositure Level: " + getMoistureLevel() + " Temperature: " + temperature;
   }
 } 

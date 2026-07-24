@@ -7,11 +7,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 import java.util.UUID;
 import java.time.OffsetDateTime;
 
 @Entity
+@Table(name = "readings")
 public class ReadingEntity {
 
   @Id
@@ -24,7 +26,7 @@ public class ReadingEntity {
   @JoinColumn(name = "plant_id", nullable = false)
   private PlantEntity plantEntity; 
 
-  @Column(name = "reacorded_at", nullable = false)
+  @Column(name = "recorded_at", nullable = false)
   private OffsetDateTime recordedAt; // use Zoned date time if this doesnt work
 
   @Column(name = "moisture_reading", nullable = false)
@@ -60,6 +62,13 @@ public class ReadingEntity {
 
   public void setMoisture_reading(Integer moisture_reading) {
     this.moisture_reading = moisture_reading;
+  }
+
+  public String toString() {
+    return " Reading ID: " + getReading_id() +
+     " Plant ID: " + getPlantEntity().getPlantId() + 
+     " Recorded at: " + getRecordedAt() + 
+     " Moisture Reading: " + getMoisture_reading();
   }
 }
  

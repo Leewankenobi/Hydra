@@ -9,8 +9,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "users")
 public class UserEntity {
   
   @Id
@@ -22,7 +24,7 @@ public class UserEntity {
   // connect this user object to houshold object via the houshold_id
   // fk
   @JoinColumn(name = "household_id", nullable = false) 
-  private HouseholdEntity household; 
+  private HouseholdEntity household;  
 
   @Column(name = "first_name", nullable = false)
   private String firstName;

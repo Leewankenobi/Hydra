@@ -31,6 +31,8 @@ public class IngestionController {
    */
   public ResponseEntity<String> receiveReading(@RequestBody SensorData sensorData) {
     try {
+
+      System.out.println("Received payload: " + sensorData.toString());
       sensorDataService.validateSensorData(sensorData);
       sensorDataService.saveSensorData(sensorData);
       return ResponseEntity.status(HttpStatus.OK).body("Saved Reading!");  
