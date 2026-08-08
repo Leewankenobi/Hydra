@@ -7,7 +7,7 @@ body {
   background-position: center;
   min-height: 100vh;
   display: flex;
-  justify-content: center; /* horizontal */
+  justify-content: center;/* horizontal */
   align-items: center;     /* vertical */
 }
 
@@ -19,14 +19,14 @@ header {
 .pane{
   width: 600px;
   padding: 40px 65px 65px 65px;
-  background-color: rgba(170, 245, 189, 0.384);
+  background-color: rgba(158, 204, 170, 0.76);
   border-radius: 15px;
   border: 1px solid #021a0500;
   box-shadow: 0 4px 15px rgba(16, 88, 40, 0.445);
   font-family:  "EB Garamond", serif;
   text-align: center;
+  margin-left: 0 px;
   animation: paneStart 1s ease;
-  
 }
 
 .pane h1 {
@@ -53,9 +53,9 @@ header {
 .pane button {
   margin-top: 20px;
   margin-bottom: 5px;
-  background-color: rgba(132, 230, 181, 0.712);
+  background-color: rgba(243, 165, 129, 0.712);
   border-radius: 15px;
-  border-color: #69f57c38;
+  border-color: #f1a67b38;
   color: #063636;
   padding: 15px 32px;
   text-align: center;
@@ -69,7 +69,7 @@ header {
 
 .pane button:hover {
   transform: scale(1.10);
-  background-color:  rgb(120, 231, 175);
+  background-color:rgba(255, 200, 175, 0.712);
 }
 
 @keyframes fadeIn {
@@ -88,7 +88,7 @@ header {
   }
   to{
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0px);
   }
 }
 

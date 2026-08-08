@@ -1,0 +1,131 @@
+/*import garamond font*/
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond&display=swap');
+
+body {
+  background-image: url("../img/indoor-plant-blurred.jpg");
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+}
+
+header {
+  color: #063636;
+  font-family:  "EB Garamond", serif;
+  font-size: 35px;
+  font-weight: bold;
+  margin-top: 170px;
+  margin-left: 100px;
+  animation: fadeIn 0.7s ease;
+}
+
+
+form {
+  width: 500px;
+  margin-top: 50px;
+  margin-left: 200px;
+  background-color: rgba(229, 248, 234, 0);
+  border-radius: 15px;
+  border: 1px solid #021a0500;
+  box-shadow: 0 4px 15px rgba(16, 88, 40, 0);
+  font-family: "EB Garamond", serif;
+  animation: paneStart 2.5s ease;
+}
+
+input {
+  background-color: rgb(245, 176, 144);
+  color: rgb(19, 51, 13);
+  width: auto;
+  padding: 10px;
+  border-radius: 5px;
+  box-sizing: border-box;
+  font-family: "EB Garamond", serif;
+  font-size: 30px;
+  border-color: #06363600;
+}
+
+label {
+  font-family: "EB Garamond", serif;
+  font-size: 32px;
+  color: rgb(5, 58, 18);
+  width: 100%;
+  padding: 10px;
+  margin-left: 10px;
+
+}
+
+  h1 {
+  color: #063636;
+  margin-top: 50px;
+  margin-bottom: 3px;
+  margin-left: 150px;
+  font-size:30px;
+  animation: fadeIn 2s ease;
+  font-family:"EB Garamond", serif;
+}
+.pane h2 {
+  margin-top: 3px;
+  margin-bottom: 1px;
+  font-size: 15px;
+  font: weight 4px;
+  color: rgb(16, 54, 42);
+  animation: fadeIn 3s ease;
+}
+
+.pane p {
+  margin-top: 10px;
+  margin-bottom: 0px;
+  font-size: 25px;
+}
+
+.pane button {
+  margin-top: 20px;
+  margin-bottom: 5px;
+  background-color: rgba(243, 165, 129, 0.712);
+  border-radius: 15px;
+  border-color: #f1a67b38;
+  color: #063636;
+  padding: 15px 32px;
+  text-align: center;
+  display: inline-block;
+  font-size: 30px;
+  cursor: pointer;
+  font-family:  "EB Garamond", serif;
+  transition: transform 0.2s ease;
+  animation: buttonStart 0.8s ease;
+}
+
+.pane button:hover {
+  transform: scale(1.10);
+  background-color:rgba(255, 200, 175, 0.712);
+}
+
+@keyframes fadeIn {
+  from{
+    opacity: 0;
+  }
+  to{
+    opacity: 1;
+  }
+}
+
+@keyframes paneStart {
+  from{
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to{
+    opacity: 1;
+    transform: translateX(0px);
+  }
+}
+
+@keyframes buttonStart {
+  from{
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to{
+    opacity: 1;
+    transform: translateX(0);
+  }  
+}
