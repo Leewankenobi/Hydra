@@ -11,57 +11,60 @@ body {
 header {
   color: #063636;
   font-family:  "EB Garamond", serif;
-  font-size: 35px;
+  font-size: 40px;
   font-weight: bold;
-  margin-top: 170px;
-  margin-left: 100px;
-  animation: fadeIn 0.7s ease;
-}
-
-
-form {
-  width: 500px;
-  margin-top: 50px;
-  margin-left: 200px;
-  background-color: rgba(229, 248, 234, 0);
-  border-radius: 15px;
-  border: 1px solid #021a0500;
-  box-shadow: 0 4px 15px rgba(16, 88, 40, 0);
-  font-family: "EB Garamond", serif;
-  animation: paneStart 2.5s ease;
-}
-
-input {
-  background-color: rgb(245, 176, 144);
-  color: rgb(19, 51, 13);
-  width: auto;
-  padding: 10px;
-  border-radius: 5px;
-  box-sizing: border-box;
-  font-family: "EB Garamond", serif;
-  font-size: 30px;
-  border-color: #06363600;
-}
-
-label {
-  font-family: "EB Garamond", serif;
-  font-size: 32px;
-  color: rgb(5, 58, 18);
-  width: 100%;
-  padding: 10px;
-  margin-left: 10px;
-
+  margin-top: 300px;
+  margin-left: 600px;
+  animation: jumpIn 0.2s ease-in;
 }
 
   h1 {
   color: #063636;
   margin-top: 50px;
   margin-bottom: 3px;
-  margin-left: 150px;
-  font-size:30px;
-  animation: fadeIn 2s ease;
+  margin-left: 650px;
+  font-size:50px;
+  animation: jumpIn 0.2s ease-in;
   font-family:"EB Garamond", serif;
 }
+
+form {
+  width: 500px;
+  margin-top: 50px;
+  margin-left: 700px;
+  background-color: rgba(243, 204, 167, 0.425);
+  border-radius: 15px;
+  border: 1px solid #021a0500;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(231, 144, 103, 0.349);
+  font-family: "EB Garamond", serif;
+  animation: paneStart 0.5s ease;
+}
+
+input {
+  background-color: rgb(247, 175, 143);
+  color: rgb(19, 51, 13);
+  width: auto;
+  padding: 12px;
+  border-radius: 5px;
+  box-sizing: border-box;
+  font-family: "EB Garamond", serif;
+  font-size: 30px;
+  font-weight: bold;
+  border-color: #06363600;
+}
+
+label {
+  font-family: "EB Garamond", serif;
+  font-size: 32px;
+  font-weight: bold;
+  color: rgb(5, 58, 18);
+  width: 100%;
+  padding: 10px;
+  margin-left: 10px;
+}
+
+
 .pane h2 {
   margin-top: 3px;
   margin-bottom: 1px;
@@ -128,4 +131,16 @@ label {
     opacity: 1;
     transform: translateX(0);
   }  
+}
+
+@keyframes jumpIn {
+  from{
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to{
+    opacity: 1;
+    transform: translateY(0);
+  }  
+  
 }
