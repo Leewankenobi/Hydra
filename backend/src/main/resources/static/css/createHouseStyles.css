@@ -1,37 +1,55 @@
-/*import garamond font*/
+/* import garamond font */
 @import url('https://fonts.googleapis.com/css2?family=EB+Garamond&display=swap');
 
+/*reset the deafult browser spacings and start clean*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 body {
   background-image: url("../img/indoor-plant-blurred.jpg");
   background-size: cover;
   background-position: center;
   min-height: 100vh;
+  display: flex; 
+  flex-direction: column;
+  align-items: center; /* works on all resolutions*/
+  justify-content: center;
+  padding: 20px;
 }
 
 header {
   color: #063636;
-  font-family:  "EB Garamond", serif;
-  font-size: 40px;
+  font-family: "EB Garamond", serif;
+  font-size: clamp(28px, 5vw, 40px); /*scale with screen*/
   font-weight: bold;
-  margin-top: 300px;
-  margin-left: 600px;
+  text-align: center;
   animation: jumpIn 0.2s ease-in;
+  margin-bottom: 20px;
 }
 
-  h1 {
+h1 {
   color: #063636;
-  margin-top: 50px;
-  margin-bottom: 3px;
-  margin-left: 650px;
-  font-size:50px;
+  font-size: clamp(32px, 7vw, 50px);
+  font-family: "EB Garamond", serif;
+  font-weight: bold;
+  text-align: center;
   animation: jumpIn 0.2s ease-in;
-  font-family:"EB Garamond", serif;
+  margin-bottom: 30px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
 }
 
 form {
-  width: 500px;
-  margin-top: 50px;
-  margin-left: 700px;
+  width: 100%;
+  max-width: 400px;
   background-color: rgba(243, 204, 167, 0.425);
   border-radius: 15px;
   border: 1px solid #021a0500;
@@ -41,35 +59,36 @@ form {
   animation: paneStart 0.5s ease;
 }
 
+label {
+  font-family: "EB Garamond", serif;
+  font-size: clamp(20px, 4vw, 32px);
+  font-weight: bold;
+  color: rgb(5, 58, 18);
+  display: block;
+  padding: 10px 0;
+  margin-bottom: 8px;
+}
+
 input {
   background-color: rgb(247, 175, 143);
   color: rgb(19, 51, 13);
-  width: auto;
-  padding: 12px;
+  width: 100%;
+  padding: 10px;
   border-radius: 5px;
   box-sizing: border-box;
   font-family: "EB Garamond", serif;
-  font-size: 30px;
+  font-size: clamp(18px, 3vw, 30px);
   font-weight: bold;
+  border: none;
   border-color: #06363600;
+  margin-bottom: 20px;
 }
-
-label {
-  font-family: "EB Garamond", serif;
-  font-size: 32px;
-  font-weight: bold;
-  color: rgb(5, 58, 18);
-  width: 100%;
-  padding: 10px;
-  margin-left: 10px;
-}
-
 
 .pane h2 {
   margin-top: 3px;
   margin-bottom: 1px;
   font-size: 15px;
-  font: weight 4px;
+  font-weight: 4px;
   color: rgb(16, 54, 42);
   animation: fadeIn 3s ease;
 }
@@ -77,70 +96,118 @@ label {
 .pane p {
   margin-top: 10px;
   margin-bottom: 0px;
-  font-size: 25px;
+  font-size: clamp(18px, 3vw, 25px);
 }
 
 .pane button {
   margin-top: 20px;
-  margin-bottom: 5px;
-  background-color: rgba(243, 165, 129, 0.712);
+  background-color: rgb(252, 181, 148);
   border-radius: 15px;
+  border: none;
   border-color: #f1a67b38;
   color: #063636;
-  padding: 15px 32px;
+  padding: 10px 20px;
   text-align: center;
-  display: inline-block;
-  font-size: 30px;
+  font-size: clamp(20px, 3vw, 28px);
+  font-family: "EB Garamond", serif;
   cursor: pointer;
-  font-family:  "EB Garamond", serif;
   transition: transform 0.2s ease;
   animation: buttonStart 0.8s ease;
+  align-self: center;
 }
 
 .pane button:hover {
-  transform: scale(1.10);
-  background-color:rgba(255, 200, 175, 0.712);
+  transform: scale(1.1);
+  background-color: rgba(255, 200, 175, 0.712);
 }
 
+/* Animations */
 @keyframes fadeIn {
-  from{
+  from {
     opacity: 0;
   }
-  to{
+  to {
     opacity: 1;
   }
 }
 
 @keyframes paneStart {
-  from{
+  from {
     opacity: 0;
     transform: translateX(30px);
   }
-  to{
+  to {
     opacity: 1;
     transform: translateX(0px);
   }
 }
 
 @keyframes buttonStart {
-  from{
+  from {
     opacity: 0;
     transform: translateX(30px);
   }
-  to{
+  to {
     opacity: 1;
     transform: translateX(0);
-  }  
+  }
 }
 
 @keyframes jumpIn {
-  from{
+  from {
     opacity: 0;
     transform: translateY(30px);
   }
-  to{
+  to {
     opacity: 1;
     transform: translateY(0);
-  }  
-  
+  }
+}
+
+/* Responsive Design */
+
+/* Tablets (600px and up) */
+@media (max-width: 768px) {
+  body {
+    padding: 15px;
+  }
+
+  header {
+    margin-bottom: 15px;
+  }
+
+  form {
+    padding: 15px;
+  }
+}
+
+/* Mobile (below 600px) */
+@media (max-width: 600px) {
+  body {
+    padding: 10px;
+    justify-content: flex-start;
+  }
+
+  header {
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    margin-bottom: 20px;
+  }
+
+  form {
+    width: 100%;
+    padding: 15px;
+  }
+
+  input {
+    font-size: clamp(16px, 3vw, 24px);
+  }
+
+  .pane button {
+    padding: 8px 16px;
+    font-size: clamp(18px, 3vw, 24px);
+  }
 }
