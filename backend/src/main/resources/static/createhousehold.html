@@ -9,12 +9,40 @@
   <body>
     <header>Let's create your household so you can manage your plants</header>
     <main>
-      <div, class = "pane">
+      <div class = "pane" id="firstNamePane">
         <h1>First, some details about you...</h1> 
         <form>
           <label for="fname">Your Name</label> <br>
           <input type="text" id="fname" name="fname"> <br>  
-          <button type="submit"> Next </button>       
+          <button type = submit id = "next1"> Next </button>       
+        </form>
+      </div>
+      <div class = "pane" hidden id="lastNamePane">
+        <form>
+          <label for="lname">Last Name</label> <br>
+          <input type="text" id="lname" name="lname"> <br>  
+          <button type = submit id = "next2"> Next </button>       
+        </form>
+      </div>
+      <div class = "pane" hidden id="emailPane">
+        <form>
+          <label for="email">Email</label> <br>
+          <input type="text" id="email" name="email"> <br>  
+          <button type = submit id = "next3"> Next </button>       
+        </form>
+      </div>
+      <div class = "pane" hidden id="usernamePane">
+        <form>
+          <label for="username">Username</label> <br>
+          <input type="text" id="username" name="username"> <br>  
+          <button type = submit id = "next4"> Next </button>       
+        </form>
+      </div>
+      <div class = "pane" hidden id="passhashPane">
+        <form>
+          <label for="passhash">Password</label> <br>
+          <input type="password" id="passhash" name="passhash"> <br>  
+          <button type = submit id = "next5"> Next </button>       
         </form>
       </div>
     </main>
