@@ -12,6 +12,9 @@ document.getElementById("next1").addEventListener('click', (event) => {
 
   if (userFirstName === '') { // handle empty name
     console.log("First name can not be empty");
+    const errorDiv = document.getElementById("fnameError");
+    errorDiv.textContent = "Don't be shy - what's your name?";
+    errorDiv.style.display = "block";
 
   } else {
     userData.firstName = userFirstName.trim(); // update dictionary
@@ -32,32 +35,39 @@ document.getElementById("next1").addEventListener('click', (event) => {
 
   if (userLastName === '') { // handle empty name
     console.log("Last Name can not be empty");
+    const errorDiv = document.getElementById("lnameError");
+    errorDiv.textContent = "Last Name can not be empty!";
+    errorDiv.style.display = "block";
 
   } else {
     userData.lastName = userLastName.trim(); // update dictionary
-    console.log("Saved to UserData: ", userData);        
+    console.log("Saved to UserData: ", userData);  
+    
+    
+    document.getElementById("lastNamePane").hidden = true;  
+    document.getElementById("emailPane").hidden = false;    
   }
-
-  document.getElementById("lastNamePane").hidden = true;  
-  document.getElementById("emailPane").hidden = false;
-
 }); 
 
-document.getElementById("next3").addEventListener('click', (event) => {
+  document.getElementById("next3").addEventListener('click', (event) => {
   event.preventDefault(); // dont submit just yet
 
   // validate user input
   const emailInput = document.getElementById("email");
   const userEmail = emailInput.value; 
 
-  //@TODO: enforce correct email format
-  //verify email
-
   if (userEmail === '') { // handle empty name
-    console.log("Email name can not be empty");
+    console.log("Email can not be empty");
+    const errorDiv = document.getElementById("emailError");
+    errorDiv.textContent = "Email must be provided";
+    errorDiv.style.display = "block";
 
   } else if (!emailRegex.test(userEmail)) { //check correct email format
-  console.log("Please enter a valid email (example: user@domain.com)");
+
+    const errorDiv = document.getElementById("emailError");
+    errorDiv.textContent = "Please enter a valid email (example: user@domain.com)";
+    errorDiv.style.display = "block";
+    console.log("Please enter a valid email (example: user@domain.com)");
 
   } else {
     userData.email = userEmail.trim(); // update dictionary
@@ -69,8 +79,7 @@ document.getElementById("next3").addEventListener('click', (event) => {
 }); 
 
 document.getElementById("next4").addEventListener('click', (event) => {
-  event.preventDefault(); // dont submit just yet
-
+  event.preventDefault(); 
   // validate suser input
   const usernameInput = document.getElementById("username");
   const userUsername = usernameInput.value; 
@@ -90,23 +99,26 @@ document.getElementById("next5").addEventListener('click', (event) => {
   // validate suser input
   const passwordInput = document.getElementById("passhash");
   const userPassword = passwordInput.value.trim(); 
+  const errorDiv = document.getElementById("passwordError");
+  const errorMsg = "Password must be at least 8 characters, with at least one uppercase, one lowercase, and one special character."
 
-  // @TODO verify password length and character type content
-  //@TODO encrypt password
+if (userPassword.length < 8) {
 
-  if (userPassword.length < 8) {
-  console.log("Password must be at least 8 characters");
-} else if (!/[A-Z]/.test(userPassword)) {
-  console.log("Password must contain at least one uppercase letter");
-} else if (!/[a-z]/.test(userPassword)) {
-  console.log("Password must contain at least one lowercase letter");
-} else if (!/[!@#$%^&*]/.test(userPassword)) {
-  console.log("Password must contain at least one special character");
-} else {
-  // All checks passed! Save it
-  userData.password = userPassword;
-  console.log("Password saved!");
+    errorDiv.textContent = errorMsg;
+    errorDiv.style.display = "block";
+  } else if (!/[A-Z]/.test(userPassword)) {
+    errorDiv.textContent = errorMsg;
+    errorDiv.style.display = "block";
+  } else if (!/[a-z]/.test(userPassword)) {
+    errorDiv.textContent = errorMsg;
+    errorDiv.style.display = "block";
+  } else if (!/[!@#$%^&*]/.test(userPassword)) {
+    errorDiv.textContent = errorMsg;
+    errorDiv.style.display = "block";
+
+  } else {
+    userData.passHash = userPassword;
+    console.log("Saved to UserData");
 }  
-
 }); 
 // registration complete -> create household page (createHousehold.js)
