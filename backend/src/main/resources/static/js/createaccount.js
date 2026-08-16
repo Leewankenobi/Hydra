@@ -1,15 +1,20 @@
-console.log('JS file loaded');
-let userData = {firstName: '', lastName: '', email: '',username: '', password: ''};
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+var userData = {
+    "user_id" : null,
+    "household_id" : null,
+    "first_name" : '',
+    "last_name" : '', 
+    "email": '',
+    "username": '', 
+    "password_hash": ''
+  };
 
 // first name handler
 document.getElementById("next1").addEventListener('click', (event) => {
   event.preventDefault(); // dont submit just yet
-
+  const userFirstName = document.getElementById("fname").value.trim();
   // validate user input
-  const firstNameInput = document.getElementById("fname");
-  const userFirstName = firstNameInput.value; 
-
   if (userFirstName === '') { // handle empty name
     console.log("First name can not be empty");
     const errorDiv = document.getElementById("fnameError");
@@ -17,21 +22,18 @@ document.getElementById("next1").addEventListener('click', (event) => {
     errorDiv.style.display = "block";
 
   } else {
-    userData.firstName = userFirstName.trim(); // update dictionary
+    userData.first_name = userFirstName; // update dictionary
     console.log("Saved to UserData: ", userData);    
-    
     document.getElementById("firstNamePane").hidden = true;  
     document.getElementById("lastNamePane").hidden = false;
   }
 }); 
 
 // last name handler
-  document.getElementById("next2").addEventListener('click', (event) => {
+document.getElementById("next2").addEventListener('click', (event) => {
+  const userLastName = document.getElementById("lname").value.trim();
   event.preventDefault(); // dont submit just yet
-
   // validate user input
-  const lastNameInput = document.getElementById("lname");
-  const userLastName = lastNameInput.value; 
 
   if (userLastName === '') { // handle empty name
     console.log("Last Name can not be empty");
@@ -40,23 +42,18 @@ document.getElementById("next1").addEventListener('click', (event) => {
     errorDiv.style.display = "block";
 
   } else {
-    userData.lastName = userLastName.trim(); // update dictionary
+    userData.last_name = userLastName; // update dictionary
     console.log("Saved to UserData: ", userData);  
-    
-    
     document.getElementById("lastNamePane").hidden = true;  
     document.getElementById("emailPane").hidden = false;    
   }
 }); 
 
-  document.getElementById("next3").addEventListener('click', (event) => {
+document.getElementById("next3").addEventListener('click', (event) => {
   event.preventDefault(); // dont submit just yet
+  const userEmail = document.getElementById("email").value.trim();
 
-  // validate user input
-  const emailInput = document.getElementById("email");
-  const userEmail = emailInput.value; 
-
-  if (userEmail === '') { // handle empty name
+  if (userEmail === '') { 
     console.log("Email can not be empty");
     const errorDiv = document.getElementById("emailError");
     errorDiv.textContent = "Email must be provided";
@@ -70,9 +67,8 @@ document.getElementById("next1").addEventListener('click', (event) => {
     console.log("Please enter a valid email (example: user@domain.com)");
 
   } else {
-    userData.email = userEmail.trim(); // update dictionary
+    userData.email = userEmail;
     console.log("Saved to UserData: ", userData);    
-    
     document.getElementById("emailPane").hidden = true;  
     document.getElementById("usernamePane").hidden = false;
   }
@@ -80,12 +76,14 @@ document.getElementById("next1").addEventListener('click', (event) => {
 
 document.getElementById("next4").addEventListener('click', (event) => {
   event.preventDefault(); 
-  // validate suser input
-  const usernameInput = document.getElementById("username");
-  const userUsername = usernameInput.value; 
-
   // username can be blank
-  userData.username = userUsername.trim(); // update dictionary
+  const userUserName = document.getElementById("username").value.trim();
+  if (userUserName === "") {
+    userData.username = "";
+  }
+  else {
+  userData.username = userUserName;
+  }
   console.log("Saved to UserData: ", userData);    
   
   document.getElementById("usernamePane").hidden = true;  
@@ -94,38 +92,23 @@ document.getElementById("next4").addEventListener('click', (event) => {
 }); 
 
 document.getElementById("next5").addEventListener('click', (event) => {
-  event.preventDefault(); // dont submit just yet
-
-  // validate suser input
-  const passwordInput = document.getElementById("passhash");
-  const userPassword = passwordInput.value.trim(); 
+  event.preventDefault();
+  const userPassword = document.getElementById("passhash").value.trim();
+  console.log(userPassword);
   const errorDiv = document.getElementById("passwordError");
   const errorMsg = "Password must be at least 8 characters, with at least one uppercase, one lowercase, and one special character."
 
-if (userPassword.length < 8) {
-
-    errorDiv.textContent = errorMsg;
-    errorDiv.style.display = "block";
-  } else if (!/[A-Z]/.test(userPassword)) {
-    errorDiv.textContent = errorMsg;
-    errorDiv.style.display = "block";
-  } else if (!/[a-z]/.test(userPassword)) {
-    errorDiv.textContent = errorMsg;
-    errorDiv.style.display = "block";
-  } else if (!/[!@#$%^&*]/.test(userPassword)) {
+if (userPassword.length < 8 || !/[A-Z]/.test(userPassword) || !/[a-z]/.test(userPassword) || !/[!@#$%^&*]/.test(userPassword)) {
     errorDiv.textContent = errorMsg;
     errorDiv.style.display = "block";
 
   } else {
-    userData.passHash = userPassword;    
+    userData.password_hash = userPassword;    
     console.log("Saved to UserData");
-    console.log("Redirecting to Household creation")
     errorDiv.hidden = true;    
   }  
 
-  
   function registerUser(userData) {
-    var userDet = {}
   }
 
 }); 
