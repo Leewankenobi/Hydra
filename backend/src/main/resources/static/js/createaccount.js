@@ -94,7 +94,6 @@ document.getElementById("next4").addEventListener('click', (event) => {
 document.getElementById("next5").addEventListener('click', (event) => {
   event.preventDefault();
   const userPassword = document.getElementById("passhash").value.trim();
-  console.log(userPassword);
   const errorDiv = document.getElementById("passwordError");
   const errorMsg = "Password must be at least 8 characters, with at least one uppercase, one lowercase, and one special character."
 
@@ -107,8 +106,4 @@ if (userPassword.length < 8 || !/[A-Z]/.test(userPassword) || !/[a-z]/.test(user
     console.log("Saved to UserData");
     errorDiv.hidden = true;    
   }  
-
-  function registerUser(userData) {
-  }
-
 }); 
