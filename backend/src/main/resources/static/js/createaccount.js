@@ -117,8 +117,15 @@ if (userPassword.length < 8) {
     errorDiv.style.display = "block";
 
   } else {
-    userData.passHash = userPassword;
+    userData.passHash = userPassword;    
     console.log("Saved to UserData");
-}  
+    console.log("Redirecting to Household creation")
+    errorDiv.hidden = true;    
+  }  
+
+  
+  function registerUser(userData) {
+    var userDet = {}
+  }
+
 }); 
-// registration complete -> create household page (createHousehold.js)
