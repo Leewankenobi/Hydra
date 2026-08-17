@@ -16,12 +16,15 @@ public class UserController {
   public UserController (UserService userService) {
     this.userService = userService;
   }
-  // @PostMapping("api/signup")  
+  // @PostMapping("api/createAccount")  // household name is also provided
   /**
-   * 201 success -> UID, email, account created
+   * 201 success -> UID, HID, email
    * 400 bad request - > email already exists, username taken, invalid password
    */
-  // @PostMapping("api/create_household")
+
+  /**
+   * @PostMapping("api/login")
+   */
   /**
    * 201 success -> HID, name, household created
    * 400 bad request - > email already exists

@@ -1,14 +1,39 @@
+import ("register.js")
+
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 var userData = {
     "user_id" : null,
     "household_id" : null,
+    "household_name" : '',
     "first_name" : '',
     "last_name" : '', 
     "email": '',
     "username": '', 
     "password_hash": ''
   };
+
+
+document.getElementById("next6").addEventListener('click', (event) => {
+  event.preventDefault();
+  const houseHoldName = document.getElementById("householdName").value.trim();
+  
+  if (houseHoldName === '') { // handle empty name
+    console.log("Household name can not be empty");
+    const errorDiv = document.getElementById("householdNameError");
+    errorDiv.textContent = "Please provide the household name";
+    errorDiv.style.display = "block";
+
+  } else {
+    // name provided
+    userData.household_name = houseHoldName; 
+    console.log("Saved to UserData: ", userData); 
+    
+    document.getElementById("householdNamePane").hidden = true;  
+    document.getElementById("firstNamePane").hidden = false;    
+
+  }
+}); 
 
 // first name handler
 document.getElementById("next1").addEventListener('click', (event) => {
@@ -103,7 +128,8 @@ if (userPassword.length < 8 || !/[A-Z]/.test(userPassword) || !/[a-z]/.test(user
 
   } else {
     userData.password_hash = userPassword;    
-    console.log("Saved to UserData");
-    errorDiv.hidden = true;    
+    console.log("Password saved to UserData");
+    errorDiv.hidden = true;
+  
   }  
 }); 

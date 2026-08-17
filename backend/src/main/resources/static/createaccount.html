@@ -9,7 +9,16 @@
   <body>
     <header>Let's create your account ...</header>
     <main>
-      <div class = "pane" id="firstNamePane">
+      <div class = "pane" id="householdNamePane">
+        <h1></h1> 
+        <form>
+          <label for="householdName">What would you like to call your household?</label> <br>
+          <input type="text" id="householdName" name="householdName"> <br>  
+          <div id="householdNameError" style="color: red; display: none;"></div>
+          <button type = submit id = "next6" > Next </button>       
+        </form>
+      </div>
+      <div class = "pane" hidden id="firstNamePane">
         <h1></h1> 
         <form>
           <label for="fname">Your Name</label> <br>

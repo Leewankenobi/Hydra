@@ -1,4 +1,4 @@
-function registerUser(params) {
+function registerUserAndHousehold(params) {
   
 }
 
