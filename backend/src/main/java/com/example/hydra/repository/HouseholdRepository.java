@@ -4,7 +4,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
+import java.util.Optional;
 
 @Repository
 public interface HouseholdRepository extends JpaRepository<HouseholdEntity, UUID> {
+
+  // JPA automatically fetches it 
+  Optional<HouseholdEntity> findByInviteCode(int code);
+
 }

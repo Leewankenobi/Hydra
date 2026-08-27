@@ -1,7 +1,8 @@
 package com.example.hydra.controller;
 
 import com.example.hydra.service.UserService;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.hydra.dto.UserData;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -16,7 +17,29 @@ public class UserController {
   public UserController (UserService userService) {
     this.userService = userService;
   }
-  // @PostMapping("api/createAccount")  // household name is also provided
+  @PostMapping("api/createAccount") 
+  public void createAccount(@RequestParam String household_name,
+    @RequestParam String first_name,
+    @RequestParam String last_name, 
+    @RequestParam String email,
+    @RequestParam String username, 
+    @RequestParam String password_hash ) {
+
+    UserData userData = new UserData();
+    userData.setHousehold_name(household_name);
+    userData.setFirst_name(first_name);
+    userData.setLast_name(last_name);
+    userData.setEmail(email);
+    userData.setUsername(username);
+    userData.setPasswordhash(password_hash);
+    
+    userService.saveUser(userData);
+  }
+  
+  
+  // household name is also provided
+  // deserialize and send to service
+
   /**
    * 201 success -> UID, HID, email
    * 400 bad request - > email already exists, username taken, invalid password

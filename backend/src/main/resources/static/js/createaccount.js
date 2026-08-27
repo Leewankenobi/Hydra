@@ -3,8 +3,7 @@ import ("register.js")
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 var userData = {
-    "user_id" : null,
-    "household_id" : null,
+  
     "household_name" : '',
     "first_name" : '',
     "last_name" : '', 
@@ -28,7 +27,7 @@ document.getElementById("next6").addEventListener('click', (event) => {
     // name provided
     userData.household_name = houseHoldName; 
     console.log("Saved to UserData: ", userData); 
-    
+
     document.getElementById("householdNamePane").hidden = true;  
     document.getElementById("firstNamePane").hidden = false;    
 
@@ -132,4 +131,16 @@ if (userPassword.length < 8 || !/[A-Z]/.test(userPassword) || !/[a-z]/.test(user
     errorDiv.hidden = true;
   
   }  
+
+  try {
+    const response = registerUser(userData); //register user
+    if (!response.ok) {
+      throw new Error(" Error - status: " , response.status);
+    }
+    console.log(response.json());
+
+    } catch (error) {
+      console.error(error.message);    
+    }  
+
 }); 

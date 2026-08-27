@@ -15,6 +15,10 @@ public class HouseholdEntity {
   @Column (name = "name")
   private String housesholdName;
 
+  @Column(name = "invite_code")
+  private Integer invite_code;
+
+
   /* One Household -> Many Plants.
     Uses the 'household' field in PlantEntity to determine
     which plants belong to this household. 
@@ -74,5 +78,12 @@ public class HouseholdEntity {
     u.setHousehold(null); 
     return u;
   }  
-  
+
+  public Integer getInviteCode() {
+    return invite_code; 
+  }
+
+  public void setInviteCode(Integer code) {
+    this.invite_code = code; 
+  }
 }
