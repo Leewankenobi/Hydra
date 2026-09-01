@@ -10,6 +10,6 @@ import java.util.Optional;
 public interface HouseholdRepository extends JpaRepository<HouseholdEntity, UUID> {
 
   // JPA automatically fetches it 
-  Optional<HouseholdEntity> findByInviteCode(int code);
+  Optional<HouseholdEntity> findByinviteCode(int code);
 
 }

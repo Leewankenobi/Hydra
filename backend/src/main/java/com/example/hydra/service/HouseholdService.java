@@ -21,13 +21,13 @@ public class HouseholdService {
     int code; 
     do {
       code = ThreadLocalRandom.current().nextInt(100000, 1000000);
-    } while (householdRepository.findByInviteCode(code).isPresent());
+    } while (householdRepository.findByinviteCode(code).isPresent());
 
     try {
 
       HouseholdEntity householdEntity = new HouseholdEntity();
       householdEntity.setHousesholdName(name);
-      householdEntity.setInviteCode(code);
+      householdEntity.setinviteCode(code);
       HouseholdEntity savedEntity = householdRepository.save(householdEntity); // returned
       return savedEntity;
 

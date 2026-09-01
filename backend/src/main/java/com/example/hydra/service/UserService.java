@@ -41,7 +41,7 @@ public class UserService {
     user.setLastName(userData.getLast_name());
     user.setEmail(userData.getEmail());
     user.setUsername(userData.getUsername());
-    user.setPasswordHash(userData.getPasswordhash());
+    user.setPasswordHash(userData.getPasswordHash());
 
     // save and return the userEntity
     UserEntity savedUser = userRepository.save(user);

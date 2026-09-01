@@ -15,8 +15,8 @@ public class HouseholdEntity {
   @Column (name = "name")
   private String housesholdName;
 
-  @Column(name = "invite_code")
-  private Integer invite_code;
+  @Column(name = "inviteCode")
+  private Integer inviteCode;
 
 
   /* One Household -> Many Plants.
@@ -79,11 +79,11 @@ public class HouseholdEntity {
     return u;
   }  
 
-  public Integer getInviteCode() {
-    return invite_code; 
+  public Integer getinviteCode() {
+    return inviteCode; 
   }
 
-  public void setInviteCode(Integer code) {
-    this.invite_code = code; 
+  public void setinviteCode(Integer code) {
+    this.inviteCode = code; 
   }
 }

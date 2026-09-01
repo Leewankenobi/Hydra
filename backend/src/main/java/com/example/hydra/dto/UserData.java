@@ -7,7 +7,7 @@ public class UserData {
   private String last_name;
   private String email;
   private String username; 
-  private String passwordhash;
+  private String passwordHash;
 
   public UserData() {}
 
@@ -51,11 +51,11 @@ public class UserData {
     this.username = username;
   }
 
-  public String getPasswordhash() {
-    return passwordhash;
+  public String getPasswordHash() {
+    return passwordHash;
   }
 
-  public void setPasswordhash(String passwordhash) {
-    this.passwordhash = passwordhash;
+  public void setPasswordHash(String passwordhash) {
+    this.passwordHash = passwordhash;
   }
 }

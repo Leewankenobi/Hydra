@@ -1,4 +1,4 @@
-import ("register.js")
+import { registerUser } from "./register.js";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -9,7 +9,7 @@ var userData = {
     "last_name" : '', 
     "email": '',
     "username": '', 
-    "password_hash": ''
+    "passwordHash": ''
   };
 
 
@@ -126,7 +126,7 @@ if (userPassword.length < 8 || !/[A-Z]/.test(userPassword) || !/[a-z]/.test(user
     errorDiv.style.display = "block";
 
   } else {
-    userData.password_hash = userPassword;    
+    userData.passwordHash = userPassword;    
     console.log("Password saved to UserData");
     errorDiv.hidden = true;
   

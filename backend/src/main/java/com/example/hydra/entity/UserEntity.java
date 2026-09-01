@@ -38,8 +38,10 @@ public class UserEntity {
   @Column(name = "username")
   private String username;
 
-  @Column(name = "password_hash", nullable = false)
+  @Column(name = "passwordHash", nullable = false)
   private String passwordHash;
+
+  public UserEntity() {}
 
   public UUID getUserId() {
     return userId;
