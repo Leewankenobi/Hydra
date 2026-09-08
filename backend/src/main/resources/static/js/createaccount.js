@@ -115,7 +115,7 @@ document.getElementById("next4").addEventListener('click', (event) => {
   
 }); 
 
-document.getElementById("next5").addEventListener('click', (event) => {
+document.getElementById("next5").addEventListener('click', async (event) => {
   event.preventDefault();
   const userPassword = document.getElementById("passhash").value.trim();
   const errorDiv = document.getElementById("passwordError");
@@ -124,20 +124,21 @@ document.getElementById("next5").addEventListener('click', (event) => {
 if (userPassword.length < 8 || !/[A-Z]/.test(userPassword) || !/[a-z]/.test(userPassword) || !/[!@#$%^&*]/.test(userPassword)) {
     errorDiv.textContent = errorMsg;
     errorDiv.style.display = "block";
+    return;
 
   } else {
     userData.passwordHash = userPassword;    
     console.log("Password saved to UserData");
-    errorDiv.hidden = true;
+    errorDiv.style.display = "none";
   
   }  
 
   try {
-    const response = registerUser(userData); //register user
+    const response = await registerUser(userData); //register user
     if (!response.ok) {
-      throw new Error(" Error - status: " , response.status);
+      throw new Error(`Error - status: ${response.status}`);
     }
-    console.log(response.json());
+    console.log(await response.text());
 
     } catch (error) {
       console.error(error.message);    

@@ -6,6 +6,9 @@ import com.example.hydra.entity.UserEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.dao.DataIntegrityViolationException;
+
+import java.util.Locale;
 
 import com.example.hydra.repository.UserRepository;
 import com.example.hydra.service.HouseholdService;
@@ -23,9 +26,10 @@ public class UserService {
   }
 
   public UserEntity saveUser(UserData userData) {
+    String email = userData.getEmail().trim().toLowerCase(Locale.ROOT);
 
     // check if email already exists - send response to frontend
-    if (userRepository.findByEmail(userData.getEmail()).isPresent()) {
+    if (userRepository.findByEmail(email).isPresent()) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
     }
   
@@ -39,13 +43,16 @@ public class UserService {
     user.setHousehold(household);
     user.setFirstName(userData.getFirst_name());
     user.setLastName(userData.getLast_name());
-    user.setEmail(userData.getEmail());
+    user.setEmail(email);
     user.setUsername(userData.getUsername());
     user.setPasswordHash(userData.getPasswordHash());
 
     // save and return the userEntity
-    UserEntity savedUser = userRepository.save(user);
-    return savedUser;
+    try {
+      return userRepository.saveAndFlush(user);
+    } catch (DataIntegrityViolationException exception) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists", exception);
+    }
   
   }  
 }
