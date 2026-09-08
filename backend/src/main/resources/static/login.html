@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hydra - Log In</title>
+    <link rel="stylesheet" href="css/createHouseStyles.css" type="text/css">
+  </head>
+  <body>
+    <header>Welcome back!</header>
+    <main>
+      <div class="pane" id="emailPane">
+        <h1></h1>
+        <p id="loginMessage" hidden></p>
+        <form>
+          <label for="email">Email</label><br>
+          <input type="email" id="email" name="email" required><br>
+          <div id="emailError" style="color: red; display: none;"></div>
+          <button type="submit" id="nextEmail">Next</button>
+        </form>
+      </div>
+      <div class="pane" hidden id="passwordPane">
+        <form>
+          <label for="password">Password:</label><br>
+          <input type="password" id="password" name="password" required><br>
+          <div id="passwordError" style="color: red; display: none;"></div>
+          <button type="submit" id="loginButton">Log in</button>
+        </form>
+      </div>
+    </main>
+    <script type="module" src="js/login.js"></script>
+  </body>
+</html> 
+ 
+
+ 

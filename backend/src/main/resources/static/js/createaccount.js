@@ -117,6 +117,13 @@ document.getElementById("next4").addEventListener('click', (event) => {
 
 document.getElementById("next5").addEventListener('click', async (event) => {
   event.preventDefault();
+  const nextButton = document.getElementById("next5");
+
+  if (nextButton.dataset.accountExists === "true") {
+    window.location.href = "login.html";
+    return;
+  }
+
   const userPassword = document.getElementById("passhash").value.trim();
   const errorDiv = document.getElementById("passwordError");
   const errorMsg = "Password must be at least 8 characters, with at least one uppercase, one lowercase, and one special character."
@@ -136,6 +143,13 @@ if (userPassword.length < 8 || !/[A-Z]/.test(userPassword) || !/[a-z]/.test(user
   try {
     const response = await registerUser(userData); //register user
     if (!response.ok) {
+      if (response.status === 409) {
+        errorDiv.textContent = "Account already exists.";
+        errorDiv.style.display = "block";
+        nextButton.textContent = "Login to an existing account";
+        nextButton.dataset.accountExists = "true";
+        return;
+      }
       throw new Error(`Error - status: ${response.status}`);
     }
     console.log(await response.text());
