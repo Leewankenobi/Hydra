@@ -1,0 +1,231 @@
+/* import garamond font */
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond&display=swap');
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --peach: #e9c4b6;
+  --mint: #d7f0da;
+  --mint-light: #e3f4e3;
+  --sage: #a9c9ad;
+  --sage-dark: #789e82;
+  --teal: #063636;
+  --teal-light: #2d9a9a;
+  --white: #f8faf5;
+}
+
+body {
+  background: var(--peach);
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 5vh 24px;
+  color: var(--teal);
+}
+header {
+  width: 100%;
+  max-width: 1000px;
+  background: rgba(215, 247, 222, 0.92);
+  padding: 1.15rem 1.5rem;
+  border-radius: 18px;
+  border: 1px solid rgba(6, 54, 54, 0.04);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow:
+    0 8px 30px rgba(74, 105, 83, 0.08);
+  font-family: "EB Garamond", serif;
+}
+
+h1 {
+  padding-left: 2%;
+  font-size: clamp(30px, 4vw, 38px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+
+.profile-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--teal-light);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "EB Garamond", serif;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.profile-icon:hover {
+  transform: translateY(-2px);
+  background: #238888;
+}
+
+
+main {
+  width: 100%;
+  max-width: 1000px;
+  margin-top: 14px;
+  padding: 1.25rem;
+  padding-top: 0.25rem;
+  padding-left: 2.5rem;
+  background: rgba(215, 247, 222, 0.92);
+  border-radius: 18px;
+  border: 1px solid rgba(6, 54, 54, 0.04);
+  box-shadow:
+    0 8px 30px rgba(74, 105, 83, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 10rem;
+  padding: 0.5 rem;
+  padding-top: 1rem;
+  border-bottom: 1px solid rgba(6, 54, 54, 0.08);
+}
+
+button {
+  margin: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: var(--teal);
+  padding: 5px 12px;
+  font-family: "EB Garamond", serif;
+  font-size: 21px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  background: transparent;
+  border-color: transparent;
+  box-shadow: inset 0 -2px 0 var(--teal-light);
+}
+
+
+/*content pane */
+
+.pane {
+  width: 100%;
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: clamp(30px, 6vw, 60px);
+  background: rgba(158, 204, 170, 0.72);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow:
+    0 12px 35px rgba(16, 88, 40, 0.14);
+  font-family: "EB Garamond", serif;
+  text-align: center;
+  animation: paneStart 0.7s ease;
+}
+
+
+.pane h1 {
+  margin: 0 0 6px;
+  padding: 0;
+  font-size: clamp(40px, 9vw, 68px);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  animation: fadeIn 0.8s ease;
+}
+
+.pane h2 {
+  margin: 0;
+  font-size: clamp(17px, 3vw, 21px);
+  font-weight: 400;
+  color: rgb(16, 54, 42);
+  opacity: 0.8;
+  animation: fadeIn 1.2s ease;
+}
+
+.pane p {
+  margin: 14px 0 0;
+  font-size: clamp(18px, 4vw, 25px);
+  line-height: 1.45;
+}
+
+
+.pane button {
+  margin-top: 26px;
+  background: rgba(243, 165, 129, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  color: var(--teal);
+  padding: 12px 28px;
+  font-family: "EB Garamond", serif;
+  font-size: clamp(19px, 4vw, 26px);
+  cursor: pointer;
+  box-shadow:
+    0 5px 15px rgba(120, 70, 50, 0.08);
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+  animation: buttonStart 0.8s ease;
+}
+
+.pane button:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 190, 164, 0.95);
+  box-shadow:
+    0 8px 20px rgba(120, 70, 50, 0.12);
+}
+
+.pane button:active {
+  transform: translateY(0);
+}
+
+/* ---------------- ANIMATIONS ---------------- */
+
+@keyframes paneStart {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes buttonStart {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
