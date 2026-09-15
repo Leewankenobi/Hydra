@@ -26,7 +26,7 @@ public class HouseholdService {
     try {
 
       HouseholdEntity householdEntity = new HouseholdEntity();
-      householdEntity.setHousesholdName(name);
+      householdEntity.setHouseholdName(name);
       householdEntity.setinviteCode(code);
       HouseholdEntity savedEntity = householdRepository.save(householdEntity); // returned
       return savedEntity;

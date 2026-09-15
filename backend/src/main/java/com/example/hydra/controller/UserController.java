@@ -2,6 +2,7 @@ package com.example.hydra.controller;
 
 import com.example.hydra.service.UserService;
 import com.example.hydra.dto.UserData;
+import com.example.hydra.dto.LoginRequest;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,22 +23,18 @@ public class UserController {
   @PostMapping("/api/createAccount") 
   public ResponseEntity<String> createAccount(@RequestBody UserData userData ) {
     // jackson automatically deserialized json and saves it to DTO
-    System.out.println(userData);
     userService.saveUser(userData);
     return ResponseEntity.ok("Sucessfully created your account, " + userData.getFirst_name());   
   }
-  
-  // household name is also provided
-  // deserialize and send to service
-
   /**
    * 201 success -> UID, HID, email
    * 400 bad request - > email already exists, username taken, invalid password
    */
+  @PostMapping("api/login")
+  public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {}
 
-  /**
-   * @PostMapping("api/login")
-   */
+
+
   /**
    * 201 success -> HID, name, household created
    * 400 bad request - > email already exists

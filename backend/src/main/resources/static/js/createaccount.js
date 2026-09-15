@@ -146,13 +146,14 @@ if (userPassword.length < 8 || !/[A-Z]/.test(userPassword) || !/[a-z]/.test(user
       if (response.status === 409) {
         errorDiv.textContent = "Account already exists.";
         errorDiv.style.display = "block";
-        nextButton.textContent = "Login to an existing account";
+        nextButton.textContent = "Login to an existing account"; // should redirect to login page
         nextButton.dataset.accountExists = "true";
         return;
       }
       throw new Error(`Error - status: ${response.status}`);
     }
-    console.log(await response.text());
+    console.log(await response.text()); //message from backend
+    window.location.href = "userDashboard.html"
 
     } catch (error) {
       console.error(error.message);    
