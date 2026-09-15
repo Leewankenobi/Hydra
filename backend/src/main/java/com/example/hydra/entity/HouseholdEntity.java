@@ -15,7 +15,7 @@ public class HouseholdEntity {
   @Column (name = "name")
   private String housesholdName;
 
-  @Column(name = "inviteCode")
+  @Column(name = "invite_code")
   private Integer inviteCode;
 
 
@@ -30,19 +30,19 @@ public class HouseholdEntity {
   @OneToMany(mappedBy = "household", cascade = CascadeType.ALL) //#
   private List<UserEntity> users; 
 
-  public UUID getHousholdId() {
+  public UUID getHouseholdId() {
     return householdId;
   }
 
-  public void setHousholdId(UUID housholdId) {
+  public void setHouseholdId(UUID housholdId) {
     this.householdId = housholdId;
   }
 
-  public String getHousesholdName() {
+  public String getHouseholdName() {
     return housesholdName;
   }
 
-  public void setHousesholdName(String housesholdName) {
+  public void setHouseholdName(String housesholdName) {
     this.housesholdName = housesholdName;
   }
 

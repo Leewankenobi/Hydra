@@ -148,7 +148,7 @@ button:hover {
   font-size: clamp(40px, 9vw, 68px);
   font-weight: 500;
   letter-spacing: -0.035em;
-  animation: fadeIn 0.8s ease;
+  animation: 0 0.8s ease;
 }
 
 .pane h2 {
