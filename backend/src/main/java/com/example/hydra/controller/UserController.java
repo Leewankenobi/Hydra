@@ -31,7 +31,10 @@ public class UserController {
    * 400 bad request - > email already exists, username taken, invalid password
    */
   @PostMapping("api/login")
-  public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {}
+  public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+    userService.authenticate(loginRequest);
+    return ResponseEntity.ok("Sucessfully logged in"); 
+  }
 
 
 

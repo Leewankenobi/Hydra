@@ -1,4 +1,5 @@
 package com.example.hydra.service;
+import com.example.hydra.dto.LoginRequest;
 import com.example.hydra.dto.UserData;
 import com.example.hydra.entity.HouseholdEntity;
 import com.example.hydra.entity.UserEntity;
@@ -9,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Locale;
+import java.util.Optional;
 
 import com.example.hydra.repository.UserRepository;
 import com.example.hydra.service.HouseholdService;
@@ -54,5 +56,26 @@ public class UserService {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists", exception);
     }
   
-  }  
+  } 
+
+  public UserEntity authenticate(LoginRequest loginRequest) {
+
+    String email = loginRequest.getEmail().trim().toLowerCase(Locale.ROOT);
+
+    Optional<UserEntity> user = userRepository.findByEmail(email);   
+    if (user.isEmpty()) { // reject if no user with that email is found
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
+    } 
+    UserEntity existingUser = user.get(); 
+
+    // reject if wrong password
+    // TODO: replace direct comparision
+
+    if (!existingUser.getPasswordHash().equals(loginRequest.getPassword())) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
+    }    
+    return existingUser;    
+
+  }
+
 }
