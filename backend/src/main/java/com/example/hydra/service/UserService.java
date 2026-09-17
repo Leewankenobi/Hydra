@@ -5,6 +5,7 @@ import com.example.hydra.entity.HouseholdEntity;
 import com.example.hydra.entity.UserEntity;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -21,10 +22,12 @@ public class UserService {
 
   public final UserRepository userRepository;
   public final HouseholdService householdService;
+  public final BCryptPasswordEncoder passwordEncoder;
 
-  public UserService(UserRepository userRepository, HouseholdService householdService){
+  public UserService(UserRepository userRepository, HouseholdService householdService, BCryptPasswordEncoder passwordEncoder){
     this.userRepository = userRepository; 
     this.householdService = householdService;
+    this. passwordEncoder = passwordEncoder; 
   }
 
   public UserEntity saveUser(UserData userData) {
@@ -47,7 +50,7 @@ public class UserService {
     user.setLastName(userData.getLast_name());
     user.setEmail(email);
     user.setUsername(userData.getUsername());
-    user.setPasswordHash(userData.getPasswordHash());
+    user.setPasswordHash(passwordEncoder.encode(userData.getPasswordHash())); // hash ya password!
 
     // save and return the userEntity
     try {
@@ -61,6 +64,7 @@ public class UserService {
   public UserEntity authenticate(LoginRequest loginRequest) {
 
     String email = loginRequest.getEmail().trim().toLowerCase(Locale.ROOT);
+    String rawPassword =  loginRequest.getPassword();
 
     Optional<UserEntity> user = userRepository.findByEmail(email);   
     if (user.isEmpty()) { // reject if no user with that email is found
@@ -68,12 +72,9 @@ public class UserService {
     } 
     UserEntity existingUser = user.get(); 
 
-    // reject if wrong password
-    // TODO: replace direct comparision
-
-    if (!existingUser.getPasswordHash().equals(loginRequest.getPassword())) {
+    if(!passwordEncoder.matches(rawPassword, existingUser.getPasswordHash())){
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
-    }    
+    }  
     return existingUser;    
 
   }

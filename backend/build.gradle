@@ -25,6 +25,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	implementation 'jakarta.transaction:jakarta.transaction-api:2.0.1'
+	implementation 'org.springframework.security:spring-security-crypto'
 }
 
 tasks.named('test') {
