@@ -36,7 +36,7 @@ public class UserController {
     return ResponseEntity.ok("Sucessfully logged in"); 
   }
 
-
+  
 
   /**
    * 201 success -> HID, name, household created

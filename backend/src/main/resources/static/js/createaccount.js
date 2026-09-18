@@ -1,6 +1,8 @@
 import { registerUser } from "./register.js";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const joinCode = sessionStorage.getItem("joinCode") 
+const joiningHousehold = joinCode !== null; // join mode
 
 var userData = {
   
@@ -12,12 +14,16 @@ var userData = {
     "passwordHash": ''
   };
 
+if (joiningHousehold) { // no need to provide household name
+  document.getElementById("householdNamePane").hidden = true;
+  document.getElementById("firstNamePane").hidden = false;
+}
 
 document.getElementById("next6").addEventListener('click', (event) => {
   event.preventDefault();
   const houseHoldName = document.getElementById("householdName").value.trim();
   
-  if (houseHoldName === '') { // handle empty name
+  if (houseHoldName === '') { // in join mode, household name can be empty
     console.log("Household name can not be empty");
     const errorDiv = document.getElementById("householdNameError");
     errorDiv.textContent = "Please provide the household name";
@@ -141,6 +147,9 @@ if (userPassword.length < 8 || !/[A-Z]/.test(userPassword) || !/[a-z]/.test(user
   }  
 
   try {
+    if (joiningHousehold) {
+      userData.joinCode
+    }
     const response = await registerUser(userData); //register user
     if (!response.ok) {
       if (response.status === 409) {

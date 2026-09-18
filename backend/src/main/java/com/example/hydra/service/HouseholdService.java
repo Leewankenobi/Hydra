@@ -5,6 +5,7 @@ import com.example.hydra.repository.HouseholdRepository;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -34,5 +35,19 @@ public class HouseholdService {
     } catch (Exception e) {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while creating household");  
     }
+  }
+
+  public ResponseEntity<String> validateCode(Integer code) {
+
+    if (code == null) { //400
+    return ResponseEntity.badRequest().body("Join code is required");
+}
+    // find household by code // 200
+    if(householdRepository.findByinviteCode(code).isPresent()) {
+      return ResponseEntity.ok("Valid code");
+    }
+    return ResponseEntity.status(HttpStatus.NOT_FOUND) // 404
+        .body("Invalid code"); 
+
   }
 }

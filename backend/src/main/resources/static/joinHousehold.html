@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hydra - Join household</title>
+    <link rel="stylesheet" href="css/createHouseStyles.css" type="text/css">
+  </head>
+  <body>
+    <header>Enter the join code: </header>
+    <main>
+      <div class="pane" id="joinCodePane">
+        <form>
+          <label for="code">Code</label><br>
+          <input id="joinCode" required><br>
+          <div id="joinCodeError" style="color: red; display: none;"></div>
+          <button type="submit" id="submitCode">Next</button>
+        </form>
+      </div>
+    </main>
+    <script type="module" src="js/joinHousehold.js"></script>
+  </body>
+</html>
