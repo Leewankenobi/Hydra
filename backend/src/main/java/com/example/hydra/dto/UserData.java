@@ -8,6 +8,7 @@ public class UserData {
   private String email;
   private String username; 
   private String passwordHash;
+  private Integer joinCode; // code to join a household, not to invite
 
   public UserData() {}
 
@@ -57,5 +58,13 @@ public class UserData {
 
   public void setPasswordHash(String passwordhash) {
     this.passwordHash = passwordhash;
+  }
+  
+  public void setJoinCode(Integer joinCode) {
+    this.joinCode = joinCode;
+  }
+
+  public Integer getJoinCode() {
+    return joinCode;
   }
 }

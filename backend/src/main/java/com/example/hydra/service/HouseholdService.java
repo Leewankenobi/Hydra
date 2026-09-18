@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Optional;
+
 @Service
 public class HouseholdService {
   public final HouseholdRepository householdRepository;
@@ -50,4 +52,13 @@ public class HouseholdService {
         .body("Invalid code"); 
 
   }
+
+  public HouseholdEntity getHouseholdByCode(Integer joinCode){
+     Optional<HouseholdEntity> household = householdRepository.findByinviteCode(joinCode);
+
+    if(household.isPresent()){
+      return household.get();
+    }
+    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Hosuehold not found");
+  }    
 }

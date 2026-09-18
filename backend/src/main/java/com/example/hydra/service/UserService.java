@@ -27,31 +27,48 @@ public class UserService {
   public UserService(UserRepository userRepository, HouseholdService householdService, BCryptPasswordEncoder passwordEncoder){
     this.userRepository = userRepository; 
     this.householdService = householdService;
-    this. passwordEncoder = passwordEncoder; 
+    this.passwordEncoder = passwordEncoder; 
   }
 
   public UserEntity saveUser(UserData userData) {
     String email = userData.getEmail().trim().toLowerCase(Locale.ROOT);
+    Integer joinCode = userData.getJoinCode();
+    String householdName = userData.getHousehold_name();
+    boolean hasJoinCode = joinCode != null;
+    boolean hasHouseholdName = householdName != null && !householdName.isBlank();
 
-    // check if email already exists - send response to frontend
+    // reject if email already exists
     if (userRepository.findByEmail(email).isPresent()) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
     }
-  
-    // create houehold entity and save to db
-    HouseholdEntity household = householdService.createHousehold(userData.getHousehold_name()); 
-
-    // create user entity - fields from user data
-    // assign created houehold to user
+    // reject if neither join code nor household is provided
+    if(!hasJoinCode && !hasHouseholdName){
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Either join code ot household name must be provided.");
+    }
+    // reject if both is provided
+    if(hasJoinCode && hasHouseholdName){
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Both join code and hosuehold name can not be provided");
+    }
 
     UserEntity user = new UserEntity();
-    user.setHousehold(household);
-    user.setFirstName(userData.getFirst_name());
-    user.setLastName(userData.getLast_name());
-    user.setEmail(email);
-    user.setUsername(userData.getUsername());
-    user.setPasswordHash(passwordEncoder.encode(userData.getPasswordHash())); // hash ya password!
 
+
+    // join household -> join code only, not hosuehold name
+    if(hasJoinCode && !hasHouseholdName){
+      HouseholdEntity existingHousehold = householdService.getHouseholdByCode(joinCode); 
+      user.setHousehold(existingHousehold);
+    }
+    // create household -> household name only
+    if(hasHouseholdName && !hasJoinCode) {
+      // create houehold entity and assign to user
+      HouseholdEntity household = householdService.createHousehold(userData.getHousehold_name().trim()); 
+      user.setHousehold(household);
+    }     
+      user.setFirstName(userData.getFirst_name());
+      user.setLastName(userData.getLast_name());
+      user.setEmail(email);
+      user.setUsername(userData.getUsername());
+      user.setPasswordHash(passwordEncoder.encode(userData.getPasswordHash())); // hash ya password!
     // save and return the userEntity
     try {
       return userRepository.saveAndFlush(user);

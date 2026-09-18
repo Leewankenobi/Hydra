@@ -11,10 +11,13 @@ var userData = {
     "last_name" : '', 
     "email": '',
     "username": '', 
-    "passwordHash": ''
+    "passwordHash": '',
+    "joinCode" : ''
+
   };
 
 if (joiningHousehold) { // no need to provide household name
+  userData.joinCode = joinCode;
   document.getElementById("householdNamePane").hidden = true;
   document.getElementById("firstNamePane").hidden = false;
 }
@@ -147,9 +150,7 @@ if (userPassword.length < 8 || !/[A-Z]/.test(userPassword) || !/[a-z]/.test(user
   }  
 
   try {
-    if (joiningHousehold) {
-      userData.joinCode
-    }
+    console.log("Request content: ", userData)
     const response = await registerUser(userData); //register user
     if (!response.ok) {
       if (response.status === 409) {
