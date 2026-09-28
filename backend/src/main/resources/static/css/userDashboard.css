@@ -15,6 +15,8 @@
   --teal: #063636;
   --teal-light: #2d9a9a;
   --white: #f8faf5;
+  --shadow-soft: 0 12px 35px rgba(74, 105, 83, 0.10);
+  --shadow-button: 0 8px 20px rgba(74, 105, 83, 0.16);
 }
 
 body {
@@ -27,6 +29,8 @@ body {
 
   padding: 5vh 24px;
   color: var(--teal);
+  font-family: "EB Garamond", serif;
+
 }
 header {
   width: 100%;
@@ -43,10 +47,11 @@ header {
   font-family: "EB Garamond", serif;
 }
 
+
 h1 {
   padding-left: 2%;
-  font-size: clamp(30px, 4vw, 38px);
-  font-weight: 500;
+  font-size: clamp(50px, 4vw, 38px);
+  font-weight: 1000;
   letter-spacing: -0.02em;
 }
 
@@ -89,6 +94,7 @@ main {
     0 8px 30px rgba(74, 105, 83, 0.08);
   display: flex;
   flex-direction: column;
+  font-family: "EB Garamond", serif;
 }
 
 .tabs {
@@ -97,10 +103,11 @@ main {
   gap: 10rem;
   padding: 0.5 rem;
   padding-top: 1rem;
+  padding-bottom: 2rem;
   border-bottom: 1px solid rgba(6, 54, 54, 0.08);
 }
-
-button {
+/* "My plants" and "My household" */
+.tab-button {
   margin: 0;
   background: transparent;
   border: 1px solid transparent;
@@ -108,7 +115,32 @@ button {
   color: var(--teal);
   padding: 5px 12px;
   font-family: "EB Garamond", serif;
-  font-size: 21px;
+  font-size: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.tab-button:hover {
+  transform: translateY(-1px);
+  background: rgba(169, 201, 173, 0.3);
+  border-color: transparent;
+  box-shadow: inset 0 -2px 0 var(--sage-dark);
+}
+
+button {
+  margin: 0;
+  background: transparent;
+  border: 1px solid var(--sage);
+  border-radius: 10px;
+  color: var(--teal);
+  padding: 5px 12px;
+  font-family: "EB Garamond", serif;
+  font-size: 30px;
+  font-weight: 600;
   cursor: pointer;
   transition:
     background-color 0.2s ease,
@@ -117,68 +149,52 @@ button {
 }
 
 button:hover {
-  transform: translateY(-1px);
-  background: transparent;
-  border-color: transparent;
-  box-shadow: inset 0 -2px 0 var(--teal-light);
+  background-color: rgba(169, 201, 173, 0.2);
+  border-color: var(--sage-dark);
 }
 
-
-/*content pane */
-
-.pane {
-  width: 100%;
-  max-width: 600px;
-  margin: 2rem auto;
-  padding: clamp(30px, 6vw, 60px);
-  background: rgba(158, 204, 170, 0.72);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow:
-    0 12px 35px rgba(16, 88, 40, 0.14);
-  font-family: "EB Garamond", serif;
-  text-align: center;
-  animation: paneStart 0.7s ease;
+h2 {
+  padding-left: 10%;
+  padding-bottom: 5rem;
+  padding-top: 1rem;
+  font-size: clamp(27px, 4vw, 38px);
+  letter-spacing: -0.02em;
 }
 
-
-.pane h1 {
-  margin: 0 0 6px;
-  padding: 0;
-  font-size: clamp(40px, 9vw, 68px);
-  font-weight: 500;
-  letter-spacing: -0.035em;
-  animation: 0 0.8s ease;
-}
-
-.pane h2 {
+.add-plant-button {
   margin: 0;
-  font-size: clamp(17px, 3vw, 21px);
-  font-weight: 400;
-  color: rgb(16, 54, 42);
-  opacity: 0.8;
-  animation: fadeIn 1.2s ease;
+  background-color: var(--sage-dark);
+  border: 1px solid var(--sage-dark);
+  border-radius: 10px;
+  padding: 5px 12px;
+  font-family: "EB Garamond", serif;
+  font-size: 25px;
+  font-weight: 600;
+  color: var(--white);
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
 }
 
-.pane p {
-  margin: 14px 0 0;
-  font-size: clamp(18px, 4vw, 25px);
-  line-height: 1.45;
+.add-plant-button:hover {
+  background-color: #6a8a70;
+  transform: translateY(-1px);
 }
-
 
 .pane button {
   margin-top: 26px;
-  background: rgba(243, 165, 129, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: var(--sage);
+  border: 1px solid var(--sage-dark);
   border-radius: 12px;
-  color: var(--teal);
+  color: var(--white);
   padding: 12px 28px;
   font-family: "EB Garamond", serif;
   font-size: clamp(19px, 4vw, 26px);
   cursor: pointer;
   box-shadow:
-    0 5px 15px rgba(120, 70, 50, 0.08);
+    0 5px 15px rgba(120, 158, 130, 0.12);
   transition:
     transform 0.2s ease,
     background-color 0.2s ease,
@@ -188,15 +204,15 @@ button:hover {
 
 .pane button:hover {
   transform: translateY(-2px);
-  background: rgba(255, 190, 164, 0.95);
+  background: var(--sage-dark);
   box-shadow:
-    0 8px 20px rgba(120, 70, 50, 0.12);
+    0 8px 20px rgba(120, 158, 130, 0.16);
 }
 
 .pane button:active {
   transform: translateY(0);
+  
 }
-
 /* ---------------- ANIMATIONS ---------------- */
 
 @keyframes paneStart {

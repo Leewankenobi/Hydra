@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hydra - Add Plant</title>
+    <link rel="stylesheet" href="css/addPlant.css" type="text/css">
+  </head>
+  <body>
+    <header>Add a plant to your household</header>
+    <main>
+      <form id="add-plant-form" enctype="multipart/form-data">
+        <!-- Step 1: Plant image and nickname -->
+        <section class="pane" id="plant-details-pane">
+          <h1>Plant details</h1>
+          <label for="plant-image">Add a picture of your plant</label>
+          <input type="file" id="plant-image" name="plantImage" accept="image/*">
+
+          <label for="nickname">What would you like to call your plant?</label>
+          <input type="text" id="nickname" name="nickname" placeholder="For example, 'Limey' or 'Office Window'" required>
+          <div id="nickname-error" class="form-error" role="alert" hidden> </div>
+
+          <button type="button" id="next-details"> Next </button>
+        </section>
+
+        <!-- Step 2: Species -->
+        <section class="pane" id="species-pane" hidden>
+          <h1>Species</h1>
+          <label for="species"> What species is your plant?(Optional) </label>
+          <input type="text" id="species" name="species" placeholder="For example, Basil">
+          <p class="field-help">This field is optional.</p>
+          <div id="species-error" class="form-error" role="alert" hidden>
+          </div>
+
+          <div class="form-navigation">
+            <button type="button" id="back-species"> Back </button>
+            <button type="button" id="next-species"> Next </button>
+          </div>
+        </section>
+
+        <!-- Step 3: Indoor or outdoor -->
+        <section class="pane" id="plant-type-pane" hidden>
+          <h1>Plant environment</h1>
+          <label for="plant-type"> Where will you keep your plant? </label>
+          <select id="plant-type" name="plantType" required novalidate>
+            <option value="" selected disabled> Select an environment </option>
+            <option value="INDOOR">Indoor</option>
+            <option value="OUTDOOR">Outdoor</option>
+          </select>
+          <div class="form-navigation">
+            <button type="button" id="back-plant-type"> Back </button>
+            <button type="button" id="next-plant-type"> Next </button>
+          </div>
+        </section>
+
+        <!-- Step 4: Minimum moisture -->
+        <section class="pane" id="minimum-moisture-pane" hidden>
+          <h1>Minimum moisture</h1>
+          <label for="min-moisture-level"> Minimum moisture level </label>
+          <input type="number" id="min-moisture-level" name="minMoistureLevel" min="0" max="100" placeholder="For example, 30" required novalidate>
+          <p class="field-help"> Use a percentage between 0 and 100.  </p>
+          <div id="minimum-moisture-error" class="form-error" role="alert" hidden> </div>
+          <div class="form-navigation">
+            <button type="button" id="back-minimum-moisture"> Back </button>
+            <button type="button" id="next-minimum-moisture"> Next </button>
+          </div>
+        </section>
+
+        <!-- Step 5: Maximum moisture -->
+        <section class="pane" id="maximum-moisture-pane" hidden>
+          <h1>Maximum moisture</h1>
+          <label for="max-moisture-level"> Maximum moisture level </label>
+          <input type="number" id="max-moisture-level" name="maxMoistureLevel" min="0" max="100" placeholder="For example, 70" required novalidate>
+          <p class="field-help"> This should be higher than the minimum level.</p>
+          <div id="maximum-moisture-error" class="form-error" role="alert" hidden>
+          </div>
+          <div class="form-navigation">
+            <button type="button" id="back-maximum-moisture"> Back </button>
+            <button type="button" id="next-maximum-moisture"> Next </button>
+          </div>
+        </section>
+
+        <!-- Step 6: Sensor -->
+        <section class="pane" id="device-pane" hidden>
+          <h1>Moisture sensor</h1>
+          <label for="device-id"> Sensor device ID </label>
+          <input type="text" id="device-id" name="deviceId" placeholder="For example, sensor-123">
+          <p class="field-help"> Eg. Adafruit stemma </p>
+          <div id="device-error" class="form-error" role="alert" hidden>
+          </div>
+          <div class="form-navigation">
+            <button type="button" id="back-device"> Back </button>
+            <button type="submit" id="create-plant"> Create plant </button>
+          </div>
+        </section>
+
+      </form>
+    </main>
+
+    <script type="module" src="js/addPlant.js"></script>
+  </body>
+</html>

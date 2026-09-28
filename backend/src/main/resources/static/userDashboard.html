@@ -9,18 +9,32 @@
   <body>
     <header>
       <h1>Hydra</h1>
+      <!--profile icon initials should be after logged in user-->
       <div class = profile-icon>LZ</div>
     </header>
     <main>
        <nav class="tabs">
-          <button id="plants-tab">My plants</button>
-          <button id="household-tab">My household</button>
+          <button id="plants-tab" class="tab-button">Manage plants</button>
+          <button id="household-tab" class="tab-button">Manage household</button>
        </nav>  
         <section id="view-plants"> 
-          <!-- plant cards -->
+           <div class = "plants-heading">
+            <h2>My plants</h2>
+            <button id = "add-plant-button" type = "button" class = "add-plant-button">Add plant</button>
+           </div>
+          <!-- plant cards -->           
+           <div id = "plant-card-container"></div>
+           <p id="plants-loading" hidden>Loading your plants...</p>
+           <p id="plants-empty" hidden>No plants added yet</p>
+           <p id="plants-error" hidden></p> <!-- other possible errors -->
         </section>
-        <section id="view-household" style="display: none;">
+
+        <section id="view-household" hidden>
           <!-- Household members -->
+        <div id="household-member-container"></div>
+        <p id="members-loading" hidden>Loading household memebers...</p>
+        <p id="members-empty" hidden>No members added yet. You can invite household members via the invite code above.</p>
+        <p id="household-members-error" hidden></p> <!-- other possible errors -->
         </section>
     
     </main>

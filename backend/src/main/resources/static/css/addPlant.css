@@ -1,0 +1,381 @@
+@import url("https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --peach: #f3cca7;
+  --peach-light: #ffd0b8;
+  --teal: #063636;
+  --green: rgb(5, 58, 18);
+  --sage: #789e82;
+  --sage-light: #a9c9ad;
+  --white: #f8faf5;
+  --error: #a93636;
+  --error-background: #f8dada;
+  --shadow: 0 5px 18px rgba(74, 105, 83, 0.2);
+}
+
+body {
+  min-height: 100vh;
+  padding: 20px;
+  background-image: url("../img/indoor-plant-blurred.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--teal);
+  font-family: "EB Garamond", serif;
+}
+
+header {
+  margin-bottom: 20px;
+  color: var(--teal);
+  font-family: "EB Garamond", serif;
+  font-size: clamp(40px, 5vw, 40px);
+  font-weight: bold;
+  text-align: center;
+  animation: jumpIn 0.3s ease-in;
+}
+
+main {
+  width: 100%;
+  max-width: 500px;
+}
+
+#add-plant-form {
+  width: 100%;
+}
+
+/* Each multi-step panel */
+.pane {
+  width: 100%;
+  padding: clamp(24px, 6vw, 48px);
+  background-color: rgba(243, 204, 167, 0.86);
+  border: 1px solid rgba(6, 54, 54, 0.08);
+  border-radius: 15px;
+  box-shadow: var(--shadow);
+  font-family: "EB Garamond", serif;
+  animation: paneStart 0.5s ease;
+}
+
+.pane[hidden] {
+  display: none;
+}
+
+.pane h1 {
+  position: relative;
+  margin: 0 0 2.2rem;
+  padding: 0 0 0.8rem;
+  color: var(--teal);
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  font-weight: 500;
+  text-align: center;
+}
+
+.pane h1::after {
+  content: "";
+  display: block;
+  width: 26rem;
+  height: 0.10rem;
+  margin-top: 0.55rem;
+  border-radius: 999px;
+  background:#063636;
+}
+
+.pane label {
+  display: block;
+  margin-bottom: 8px;
+  padding-top: 10px;
+  color: var(--green);
+  font-size: clamp(20px, 4vw, 28px);
+  font-weight: 500;
+}
+
+/* Text and number fields */
+.pane input[type="text"],
+.pane input[type="number"],
+.pane select {
+  width: 100%;
+  min-height: 48px;
+  margin-bottom: 14px;
+  padding: 10px;
+  background-color: rgba(247, 175, 143, 0.9);
+  border: 1px solid rgba(6, 54, 54, 0.15);
+  border-radius: 6px;
+  color: rgb(19, 51, 13);
+  font-family: "EB Garamond", serif;
+  font-size: clamp(18px, 3vw, 25px);
+  font-weight: 600;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.pane input::placeholder {
+  color: rgba(19, 51, 13, 0.6);
+}
+
+.pane input:focus,
+.pane select:focus {
+  background-color: rgba(255, 205, 178, 0.95);
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(6, 54, 54, 0.15);
+}
+
+/* Image upload field */
+.pane input[type="file"] {
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 8px;
+  background-color: rgba(247, 175, 143, 0.6);
+  border: 1px dashed var(--sage);
+  border-radius: 6px;
+  color: var(--green);
+  font-family: "EB Garamond", serif;
+  font-size: 17px;
+}
+
+/* Custom Browse button */
+.pane input[type="file"]::file-selector-button {
+  margin-right: 10px;
+  padding: 9px 15px;
+  background-color: var(--sage);
+  border: 1px solid var(--sage);
+  border-radius: 8px;
+  color: var(--white);
+  font-family: "EB Garamond", serif;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.pane input[type="file"]::file-selector-button:hover {
+  background-color: var(--teal);
+  transform: translateY(-1px);
+}
+
+/* Indoor/outdoor dropdown */
+.pane select {
+  appearance: none;
+  padding-right: 42px;
+  cursor: pointer;
+  background-color: rgba(247, 175, 143, 0.9);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--teal) 50%),
+    linear-gradient(135deg, var(--teal) 50%, transparent 50%);
+  background-position:
+    calc(100% - 21px) 21px,
+    calc(100% - 14px) 21px;
+  background-repeat: no-repeat;
+  background-size: 7px 7px;
+}
+
+.pane select option {
+  background-color: var(--peach-light);
+  color: var(--teal);
+}
+
+/* Supporting text */
+.field-help {
+  margin: 8px 0 12px;
+  color: rgba(16, 54, 42, 0.8);
+  font-size: clamp(16px, 3vw, 20px);
+}
+
+/* Validation errors */
+.form-error {
+  margin: 4px 0 12px;
+  padding: 8px 10px;
+  background-color: var(--error-background);
+  border-left: 4px solid var(--error);
+  border-radius: 4px;
+  color: var(--error);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.form-error[hidden] {
+  display: none;
+}
+
+/* Back and Next controls */
+.form-navigation {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.pane button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: rgb(252, 181, 148);
+  border: 1px solid rgba(241, 166, 123, 0.5);
+  border-radius: 15px;
+  color: var(--teal);
+  font-family: "EB Garamond", serif;
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(120, 70, 50, 0.12);
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+  animation: buttonStart 0.8s ease;
+}
+
+.pane button:hover {
+  background-color: rgba(255, 200, 175, 0.95);
+  box-shadow: 0 7px 15px rgba(120, 70, 50, 0.18);
+  transform: translateY(-2px);
+}
+
+.pane button:active {
+  transform: translateY(0);
+}
+
+.pane button:focus-visible {
+  outline: 3px solid rgba(45, 154, 154, 0.5);
+  outline-offset: 3px;
+}
+
+/* Final create button */
+#create-plant {
+  background-color: var(--sage);
+  border-color: var(--sage);
+  color: var(--white);
+}
+
+#create-plant:hover {
+  background-color: var(--teal);
+  border-color: var(--teal);
+}
+
+/* Optional back-button styling */
+#back-species,
+#back-plant-type,
+#back-minimum-moisture,
+#back-maximum-moisture,
+#back-device {
+  background-color: transparent;
+  border-color: var(--sage);
+  color: var(--teal);
+  box-shadow: none;
+}
+
+#back-species:hover,
+#back-plant-type:hover,
+#back-minimum-moisture:hover,
+#back-maximum-moisture:hover,
+#back-device:hover {
+  background-color: rgba(169, 201, 173, 0.35);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes paneStart {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes buttonStart {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes jumpIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  body {
+    padding: 15px;
+    justify-content: flex-start;
+  }
+
+  header {
+    margin-top: 20px;
+    margin-bottom: 15px;
+  }
+
+  .pane {
+    padding: 25px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+
+  header {
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+
+  .pane {
+    padding: 20px 15px;
+  }
+
+  .form-navigation {
+    flex-direction: column-reverse;
+  }
+
+  .pane button {
+    width: 100%;
+    padding: 8px 16px;
+    font-size: clamp(18px, 3vw, 24px);
+  }
+
+  .pane input[type="file"]::file-selector-button {
+    font-size: 16px;
+  }
+}
