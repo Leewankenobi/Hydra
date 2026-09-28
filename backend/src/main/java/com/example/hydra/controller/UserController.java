@@ -1,9 +1,16 @@
 package com.example.hydra.controller;
 
 import com.example.hydra.service.UserService;
+
+import jakarta.servlet.http.HttpSession;
+
 import com.example.hydra.dto.UserData;
+import com.example.hydra.entity.UserEntity;
 import com.example.hydra.dto.LoginRequest;
 
+import java.util.UUID;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,12 +38,25 @@ public class UserController {
    * 400 bad request - > email already exists, username taken, invalid password
    */
   @PostMapping("api/login")
-  public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
-    userService.authenticate(loginRequest);
+  public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest, HttpSession session) {
+    UserEntity authenticatedUser = userService.authenticate(loginRequest);
+    // create session
+    session.setAttribute("userId", authenticatedUser.getUserId());
     return ResponseEntity.ok("Sucessfully logged in"); 
   }
 
-  
+  @GetMapping ("api/me")
+  public ResponseEntity<String> me(HttpSession session) {
+    UUID userId = (UUID) session.getAttribute("userId");
+     if (userId == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        .body("You are not logged in");
+    }
+    return ResponseEntity.ok("Logged-in user: " + userId);
+  }
+
+  // logout endpoint
+  // user/me -> current user's data
 
   /**
    * 201 success -> HID, name, household created

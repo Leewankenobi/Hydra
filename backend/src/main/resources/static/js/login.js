@@ -51,8 +51,9 @@ createAccountButton.addEventListener("click", () => {
 async function submitLogin(userLoginData) {
   try {
     const response = await fetch("http://localhost:8080/api/login", {
-      method: "POST",
+      method: "POST", 
       mode: "cors",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json"
       },
