@@ -9,12 +9,12 @@
   <body>
     <header>Add a plant to your household</header>
     <main>
-      <form id="add-plant-form" enctype="multipart/form-data">
+      <form id="add-plant-form" enctype="multipart/form-data" novalidate>
         <!-- Step 1: Plant image and nickname -->
         <section class="pane" id="plant-details-pane">
           <h1>Plant details</h1>
           <label for="plant-image">Add a picture of your plant</label>
-          <input type="file" id="plant-image" name="plantImage" accept="image/*">
+          <input type="file" id="plant-image" name="plantImage" accept="image/jpeg, image/png, image/webp">
 
           <label for="nickname">What would you like to call your plant?</label>
           <input type="text" id="nickname" name="nickname" placeholder="For example, 'Limey' or 'Office Window'" required>

@@ -20,16 +20,16 @@ public class PlantEntity {
   @JoinColumn(name = "household_id", nullable = false) 
   private HouseholdEntity household; 
 
-  @Column(name = "species", nullable = false)
+  @Column(name = "species")
   private String species; 
 
   @Column(name = "nickname", nullable = false)
   private String nickname; 
 
-  @Column(name = "plant_type") // TODO: enum? 
+  @Column(name = "plant_type") 
   private String plantType; 
 
-  @Column(name = "min_moisture_level") // TODO: dataset for plant species? 
+  @Column(name = "min_moisture_level")
   private Integer minMoistureLevel; 
 
   @Column(name = "max_moisture_level")
@@ -38,6 +38,10 @@ public class PlantEntity {
   //pico id - one pico/plant
   @Column(name = "device_id", nullable = false)
   private String deviceId;
+
+  @OneToOne(mappedBy = "plant",cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
+  private PlantImageEntity image; 
+
 
   public UUID getPlantId() {
     return plantId;
@@ -101,6 +105,14 @@ public class PlantEntity {
 
   public void setDeviceId(String deviceId) {
     this.deviceId = deviceId;
+  }
+
+  public PlantImageEntity getImage() {
+  return image;
+}
+
+  public void setImage(PlantImageEntity image) {
+    this.image = image;
   }
 
 }

@@ -8,7 +8,8 @@ public class PlantRequest {
   private String nickname;
   private Integer minMoistureLevel;
   private Integer maxMoistureLevel;
-  private PlantType plantType; 
+  private String plantType; 
+  private String deviceID;
 
   public String getHouseholdId() {
     return householdId;
@@ -34,11 +35,11 @@ public class PlantRequest {
     this.nickname = nickname;
   }
 
-  public PlantType getPlantType() {
+  public String getPlantType() {
     return plantType;
   }
 
-  public void setPlantType(PlantType plantType) {
+  public void setPlantType(String plantType) {
     this.plantType = plantType;
   }
 
@@ -56,5 +57,13 @@ public class PlantRequest {
 
   public void setMaxMoistureLevel(Integer maxMoistureLevel) {
     this.maxMoistureLevel = maxMoistureLevel;
+  }
+
+  public void setDeviceId(String deviceID){
+    this.deviceID = deviceID;
+  }
+
+  public String getDeviceId() {
+    return deviceID;
   }
 }

@@ -9,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class HouseholdService {
@@ -60,5 +62,5 @@ public class HouseholdService {
       return household.get();
     }
     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Hosuehold not found");
-  }    
+  }  
 }

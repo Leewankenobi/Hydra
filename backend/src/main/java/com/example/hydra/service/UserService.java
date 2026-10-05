@@ -12,6 +12,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.example.hydra.repository.UserRepository;
 import com.example.hydra.service.HouseholdService;
@@ -96,4 +97,11 @@ public class UserService {
 
   }
 
+  public HouseholdEntity getHouseholdForUser(UUID userId) {
+    UserEntity user = userRepository.findById(userId)
+        .orElseThrow(() ->
+            new ResponseStatusException(HttpStatus.NOT_FOUND,"User with such ID not found")
+        );
+    return user.getHousehold();
+  }
 }

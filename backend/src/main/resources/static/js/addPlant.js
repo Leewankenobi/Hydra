@@ -1,4 +1,27 @@
 const form = document.getElementById("add-plant-form");
+const imageInput = document.getElementById("plant-image");
+const allowedImageTypes = ["image/jpeg", "image/png", "image/webp"];
+const maxImageSize = 7 * 1024 * 1024; // 7 MB
+
+imageInput.addEventListener("change", () => {
+  const image = imageInput.files[0];
+
+  if (!image) {
+    return;
+  }
+
+  if (!allowedImageTypes.includes(image.type)) {
+    imageInput.value = "";
+    window.alert("Please choose a JPEG, PNG, or WebP image.");
+    return;
+  }
+
+  if (image.size > maxImageSize) {
+    imageInput.value = "";
+    window.alert("The image must be smaller than 7 MB.");
+  }
+});
+
 // display order of pages
 const steps = [
   document.getElementById("plant-details-pane"),
@@ -165,9 +188,15 @@ form.addEventListener("submit", async (event) => {event.preventDefault();
     deviceId: formData.get("deviceId") || null
   };
 
-  const plantImage = formData.get("plantImage");
-
   console.log("Plant data:", plantData);
-  console.log("Selected image:", plantImage); 
+  console.log("Selected image:", formData.get("plantImage"));
+
+  // no content type - boundry is added by browser
+  const response = await fetch("http://localhost:8080/api/plants/addPlant", {
+    method: "POST",
+    mode: "cors",
+    credentials: "include",
+    body: formData
+  });
 
 });
