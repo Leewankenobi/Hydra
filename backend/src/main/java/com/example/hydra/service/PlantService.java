@@ -3,9 +3,12 @@ package com.example.hydra.service;
 import java.io.IOException;
 import java.util.Set;
 import java.util.UUID;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,8 +17,8 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.hydra.dto.PlantRequest;
 import com.example.hydra.entity.HouseholdEntity;
 import com.example.hydra.entity.PlantEntity;
-import com.example.hydra.entity.PlantImageEntity;
 import com.example.hydra.repository.PlantRepository;
+import com.example.hydra.service.ImageService;
 
 @Service
 public class PlantService {
@@ -23,75 +26,69 @@ public class PlantService {
   private static final long MAX_IMAGE_SIZE = 7 * 1024 * 1024;
 
   private static final Set<String> ALLOWED_IMAGE_TYPES = Set.of(
-      "image/jpeg",
-      "image/png",
-      "image/webp"
-  );
+    "image/jpeg",
+    "image/png",
+    "image/webp");
 
   private final PlantRepository plantRepository;
   private final UserService userService;
+  private final ImageService imageService;
 
-  public PlantService(PlantRepository plantRepository, UserService userService) {
+  public PlantService(PlantRepository plantRepository, UserService userService, ImageService imageService) {
     this.plantRepository = plantRepository;
     this.userService = userService;
+    this.imageService = imageService;
   }
 
-  public PlantEntity savePlant(PlantRequest plantRequest, MultipartFile plantImage, UUID userId) {
+  public ResponseEntity<String> savePlant(PlantRequest plantRequest, MultipartFile plantImage, UUID userId) {
 
     validatePlantRequest(plantRequest, userId);
     validatePlantImage(plantImage);
 
-    int min = plantRequest.getMinMoistureLevel();
-    int max = plantRequest.getMaxMoistureLevel();
-
-    if (min < 0 || min > 100 ||
-        max < 0 || max > 100 ||
-        min >= max) {
-
-      throw new ResponseStatusException(
-          HttpStatus.BAD_REQUEST,
-          "Moisture levels must be between 0 and 100, and minimum must be lower than maximum"
-      );
-    }
-
-    HouseholdEntity household = userService.getHouseholdForUser(userId);
+    // save to household  
     PlantEntity plantEntity = new PlantEntity();
-
+    HouseholdEntity household = userService.getHouseholdForUser(userId);
     plantEntity.setHousehold(household);
+
     plantEntity.setNickname(plantRequest.getNickname().trim());
     plantEntity.setSpecies(plantRequest.getSpecies());
     plantEntity.setPlantType(plantRequest.getPlantType());
-    plantEntity.setMinMoistureLevel(min);
-    plantEntity.setMaxMoistureLevel(max);
+
+    plantEntity.setMinMoistureLevel(plantRequest.getMinMoistureLevel());
+    plantEntity.setMaxMoistureLevel(plantRequest.getMaxMoistureLevel());
     plantEntity.setDeviceId(plantRequest.getDeviceId());
 
-    PlantImageEntity imageEntity = new PlantImageEntity();
+    // upload image and save key
+    String key = imageService.uploadImage(plantImage);
+    plantEntity.setImageKey(key);
 
+    // save to database
+    // if saving fails, delete orphan image in filebase
     try {
-      imageEntity.setImageData(plantImage.getBytes());
-    } catch (IOException exception) {
-      throw new ResponseStatusException(
-          HttpStatus.INTERNAL_SERVER_ERROR,
-          "The server could not read the plant image",
-          exception
-      );
-    }
+      plantRepository.saveAndFlush(plantEntity);
+      return ResponseEntity.ok("Plant saved sucessfully!");
 
-    imageEntity.setContentType(plantImage.getContentType());
-    imageEntity.setContentSize((int) plantImage.getSize());
-
-    // set both sides because one to one.
-    imageEntity.setPlant(plantEntity);
-    plantEntity.setImage(imageEntity);
-
-    try {
-      return plantRepository.saveAndFlush(plantEntity);
     } catch (DataIntegrityViolationException exception) {
+      cleanUpImage(key);
       throw new ResponseStatusException(
           HttpStatus.CONFLICT,
-          "Conflict: Could not save plant.", exception
+          "Conflict: Could not save plant: ", exception
       );
+    } catch(RuntimeException e) {
+      cleanUpImage(key);
+      throw e; 
     }
+  }
+
+
+  // --------- Helpers --------- //
+
+  private void cleanUpImage(String key) {
+    try {
+      imageService.deleteImage(key);
+    } catch (RuntimeException ignored) {
+      // best effort: the original save error matters more
+      }
   }
 
   private void validatePlantRequest(PlantRequest plantRequest, UUID userId) {
@@ -112,6 +109,19 @@ public class PlantService {
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST,
           "Please provide all required plant details"
+      );
+    }
+
+    int min = plantRequest.getMinMoistureLevel();
+    int max = plantRequest.getMaxMoistureLevel();
+
+    if (min < 0 || min > 100 ||
+        max < 0 || max > 100 ||
+        min >= max) {
+
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST,
+          "Moisture levels must be between 0 and 100, and minimum must be lower than maximum"
       );
     }
   }

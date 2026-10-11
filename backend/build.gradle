@@ -26,6 +26,8 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	implementation 'jakarta.transaction:jakarta.transaction-api:2.0.1'
 	implementation 'org.springframework.security:spring-security-crypto'
+	implementation(platform("software.amazon.awssdk:bom:2.55.14"))
+  implementation 'software.amazon.awssdk:s3'
 }
 
 tasks.named('test') {

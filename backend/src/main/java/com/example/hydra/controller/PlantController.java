@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import com.example.hydra.dto.PlantRequest;
 import com.example.hydra.service.PlantService;
 
-
 @RestController 
 public class PlantController {
   public final PlantService plantService;
@@ -47,10 +46,26 @@ public class PlantController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
           .body("You are not logged in");
       }
-
+      
       plantService.savePlant(plantRequest, plantImage, userId); 
       return ResponseEntity.ok("Plant Created and Saved");
 
   }
+
+  // // get all plants in user's household
+  // @GetMapping("api/plants/getAllPlants")
+  // public List<PlantDTO> getAllPlants(HttpSession session) {
+  //   UUID userID = (UUID) session.getAttribute("userID");
+
+  //    if(userId == null){
+  //       return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+  //         .body("You are not logged in");
+  //     }
+
+  //     List<PlantDTO> plants = plantService.getAllPlants(userID); 
+  //     return plants; 
+
+
+  // }
 }
   

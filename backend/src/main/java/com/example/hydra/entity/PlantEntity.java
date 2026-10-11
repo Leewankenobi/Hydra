@@ -39,9 +39,8 @@ public class PlantEntity {
   @Column(name = "device_id", nullable = false)
   private String deviceId;
 
-  @OneToOne(mappedBy = "plant",cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
-  private PlantImageEntity image; 
-
+  @Column(name = "image_key")
+  private String image_key; 
 
   public UUID getPlantId() {
     return plantId;
@@ -107,12 +106,12 @@ public class PlantEntity {
     this.deviceId = deviceId;
   }
 
-  public PlantImageEntity getImage() {
-  return image;
-}
+  public void setImageKey(String key) {
+    this.image_key = key;
+  }
 
-  public void setImage(PlantImageEntity image) {
-    this.image = image;
+  public String getImageKey(){
+    return image_key;
   }
 
 }
