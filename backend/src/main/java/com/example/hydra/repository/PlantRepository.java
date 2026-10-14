@@ -5,7 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
+import java.util.List;
+import com.example.hydra.entity.HouseholdEntity;
 
 @Repository
 public interface PlantRepository extends JpaRepository<PlantEntity, UUID> {
+
+  List<PlantEntity> findByHousehold(HouseholdEntity household);
 }

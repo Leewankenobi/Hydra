@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.UUID;
 import java.io.IOException;
+import java.time.Duration;
 
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.HttpStatus;
@@ -13,14 +14,18 @@ import org.springframework.web.server.ResponseStatusException;
 import software.amazon.awssdk.core.exception.SdkException;
 
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import org.springframework.beans.factory.annotation.Value;
 
 @Service
 public class ImageService {
 
   private final S3Client s3;
+  private final S3Presigner presigner; 
   private final String bucket_name;
 
    private static final Map<String,String> ct = Map.of(
@@ -29,8 +34,9 @@ public class ImageService {
     "image/webp", "webp"
     );
 
-  public ImageService(S3Client s3, @Value("${filebase.bucket}") String bucket_name){
+  public ImageService(S3Client s3, S3Presigner presigner, @Value("${filebase.bucket}") String bucket_name){
     this.s3 = s3;
+    this.presigner = presigner;
     this.bucket_name = bucket_name;
   }
 
@@ -99,5 +105,26 @@ public class ImageService {
       );
     }
   }
+
+  // returns the pre signed URL of the image from its key
+  public String getImageURL(String key) {
+    
+  GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+      .bucket(bucket_name)
+      .key(key)
+      .build();
+
+  GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+      .signatureDuration(Duration.ofMinutes(30))
+      .getObjectRequest(getObjectRequest)
+      .build();
+
+  return presigner.presignGetObject(presignRequest)
+      .url()
+      .toString();
+}
+
+  
+  
 
 }

@@ -5,6 +5,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -17,13 +19,18 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.hydra.dto.PlantRequest;
 import com.example.hydra.entity.HouseholdEntity;
 import com.example.hydra.entity.PlantEntity;
+import com.example.hydra.dto.PlantData;
 import com.example.hydra.repository.PlantRepository;
 import com.example.hydra.service.ImageService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class PlantService {
 
   private static final long MAX_IMAGE_SIZE = 7 * 1024 * 1024;
+   private static final Logger log = LoggerFactory.getLogger(PlantService.class);
 
   private static final Set<String> ALLOWED_IMAGE_TYPES = Set.of(
     "image/jpeg",
@@ -78,6 +85,39 @@ public class PlantService {
       cleanUpImage(key);
       throw e; 
     }
+  }
+
+  @Transactional(readOnly = true)
+  public List<PlantData> getAllPlants(UUID userId){
+    // session is already verified by controller
+
+    HouseholdEntity household = userService.getHouseholdForUser(userId);
+    List<PlantEntity> plants = plantRepository.findByHousehold(household);
+    List<PlantData> result = new ArrayList<>();
+
+    for(PlantEntity plant: plants) {
+      String imageUrl = null;
+      // get pre signed URL
+      if(plant.getImageKey() != null){
+        imageUrl = imageService.getImageURL(plant.getImageKey());
+      }
+
+      // fill in the dto
+      PlantData data = new PlantData(
+        plant.getPlantId(),
+        plant.getNickname(),
+        plant.getSpecies(),
+        plant.getPlantType(),
+        plant.getMinMoistureLevel(),
+        plant.getMaxMoistureLevel(),
+        plant.getDeviceId(),
+        imageUrl
+      );
+
+      result.add(data);
+    }
+
+    return result; 
   }
 
 

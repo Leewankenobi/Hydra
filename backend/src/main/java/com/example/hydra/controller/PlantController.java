@@ -2,6 +2,7 @@ package com.example.hydra.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,10 +18,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.example.hydra.dto.PlantRequest;
+import com.example.hydra.dto.PlantData;
 import com.example.hydra.service.PlantService;
 
 @RestController 
@@ -52,20 +55,19 @@ public class PlantController {
 
   }
 
-  // // get all plants in user's household
-  // @GetMapping("api/plants/getAllPlants")
-  // public List<PlantDTO> getAllPlants(HttpSession session) {
-  //   UUID userID = (UUID) session.getAttribute("userID");
+  // get all plants in user's household
+  @GetMapping("/api/plants/getAllPlants")
+  public ResponseEntity<?> getAllPlants(HttpSession session) {
+    UUID userId = (UUID) session.getAttribute("userId");
 
-  //    if(userId == null){
-  //       return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-  //         .body("You are not logged in");
-  //     }
+    if (userId == null) {
+      return ResponseEntity
+          .status(HttpStatus.UNAUTHORIZED)
+          .body("You are not logged in");
+    }
 
-  //     List<PlantDTO> plants = plantService.getAllPlants(userID); 
-  //     return plants; 
-
-
-  // }
+    List<PlantData> plants = plantService.getAllPlants(userId);
+    return ResponseEntity.ok(plants);
+  }
 }
   
