@@ -161,6 +161,79 @@ h2 {
   letter-spacing: -0.02em;
 }
 
+.plants-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.plants-heading h2 {
+  margin: 0;
+}
+
+.plant-card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  padding: 0 1rem 1.5rem 0;
+}
+
+#plant-card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  padding: 0 1rem 1.5rem 0;
+}
+
+.plant-card {
+  overflow: hidden;
+  border: 1px solid rgba(6, 54, 54, 0.08);
+  border-radius: 16px;
+  background: rgba(248, 250, 245, 0.8);
+  box-shadow: var(--shadow-soft);
+}
+
+.plant-card-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 210px;
+  background: var(--mint-light);
+}
+
+.plant-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.plant-card-image-fallback {
+  color: var(--sage-dark);
+  font-size: 1.1rem;
+}
+
+.plant-card-content {
+  padding: 1rem 1.1rem 1.2rem;
+}
+
+.plant-card-content h3 {
+  margin-bottom: 0.65rem;
+  font-size: 1.6rem;
+}
+
+.plant-moisture,
+.plant-status {
+  font-size: 1.15rem;
+}
+
+.plant-status {
+  margin-top: 0.4rem;
+  color: var(--sage-dark);
+}
+
 .add-plant-button {
   margin: 0;
   background-color: var(--sage-dark);

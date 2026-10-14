@@ -1,7 +1,24 @@
 const form = document.getElementById("add-plant-form");
 const imageInput = document.getElementById("plant-image");
+const createPlantButton = document.getElementById("create-plant");
+const savePlantError = document.getElementById("save-plant-error");
 const allowedImageTypes = ["image/jpeg", "image/png", "image/webp"];
 const maxImageSize = 7 * 1024 * 1024; // 7 MB
+
+const saveError = new URLSearchParams(window.location.search).get("saveError");
+if (saveError) {
+  savePlantError.textContent = saveError;
+  savePlantError.hidden = false;
+
+  window.history.replaceState({}, document.title, window.location.pathname);
+}
+
+function clearSavePlantError() {
+  savePlantError.textContent = "";
+  savePlantError.hidden = true;
+}
+
+form.addEventListener("input", clearSavePlantError);
 
 imageInput.addEventListener("change", () => {
   const image = imageInput.files[0];
@@ -164,7 +181,32 @@ document.getElementById("back-device").addEventListener("click", () => {
     showStep(4);
   });
 
-form.addEventListener("submit", async (event) => {event.preventDefault();
+form.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter") {
+    return;
+  }
+
+  event.preventDefault();
+
+  const nextButtonByStep = [
+    "next-details",
+    "next-species",
+    "next-plant-type",
+    "next-minimum-moisture",
+    "next-maximum-moisture",
+    "create-plant"
+  ];
+
+  document.getElementById(nextButtonByStep[currentStep]).click();
+});
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  if (currentStep !== steps.length - 1) {
+    return;
+  }
+
   if (!validatePlantDetails()) {
     showStep(0);
     return;
@@ -177,6 +219,9 @@ form.addEventListener("submit", async (event) => {event.preventDefault();
     showStep(3);
     return;
   }
+
+  createPlantButton.disabled = true;
+  createPlantButton.textContent = "Saving...";
 
   const formData = new FormData(form);
   const plantData = {
@@ -192,11 +237,66 @@ form.addEventListener("submit", async (event) => {event.preventDefault();
   console.log("Selected image:", formData.get("plantImage"));
 
   // no content type - boundry is added by browser
-  const response = await fetch("http://localhost:8080/api/plants/addPlant", {
-    method: "POST",
-    mode: "cors",
-    credentials: "include",
-    body: formData
-  });
+  try {
+    const response = await fetch("http://localhost:8080/api/plants/addPlant", {
+      method: "POST",
+      mode: "cors",
+      credentials: "include",
+      body: formData
+    });
 
+    if (!response.ok) {
+      const serverMessage = await getServerErrorMessage(response);
+      const message = serverMessage || getSaveErrorMessage(response.status);
+      window.location.href = `addPlant.html?saveError=${encodeURIComponent(message)}`;
+      return;
+    }
+
+    window.location.href = "userDashboard.html";
+  } catch (error) {
+    if (error instanceof TypeError) {
+      const message = "The server could not be reached. Please try again.";
+      window.location.href = `addPlant.html?saveError=${encodeURIComponent(message)}`;
+      return;
+    }
+
+    createPlantButton.disabled = false;
+    createPlantButton.textContent = "Create plant";
+    console.error("Could not save plant:", error);
+  }
 });
+
+async function getServerErrorMessage(response) {
+  const responseText = (await response.text()).trim();
+
+  if (!responseText) {
+    return "";
+  }
+
+  try {
+    const errorBody = JSON.parse(responseText);
+    if (typeof errorBody.message === "string" && errorBody.message.trim()) {
+      return errorBody.message;
+    }
+
+    return "";
+  } catch {
+    return responseText;
+  }
+}
+
+function getSaveErrorMessage(status) {
+  if (status === 400) {
+    return "Please check the plant details and image, then try again.";
+  }
+
+  if (status === 401) {
+    return "You are not logged in. Please log in and try again.";
+  }
+
+  if (status === 409) {
+    return "A plant with these details already exists.";
+  }
+
+  return "The plant could not be saved. Please try again.";
+}

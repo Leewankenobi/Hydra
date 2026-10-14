@@ -36,6 +36,16 @@ body {
   font-family: "EB Garamond", serif;
 }
 
+.page-error {
+  width: min(100%, 700px);
+  margin-bottom: 1rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid #b94a48;
+  border-radius: 8px;
+  background: #fde8e7;
+  color: #8a1f1b;
+}
+
 header {
   margin-bottom: 20px;
   color: var(--teal);
