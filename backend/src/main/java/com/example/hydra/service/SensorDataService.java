@@ -6,10 +6,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.hydra.dto.SensorData;
 import com.example.hydra.entity.PlantEntity;
 import com.example.hydra.entity.ReadingEntity;
+import com.example.hydra.entity.UserEntity;
 import com.example.hydra.repository.ReadingsRepository;
 import com.example.hydra.repository.PlantRepository;
+import com.example.hydra.repository.UserRepository;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +24,18 @@ public class SensorDataService {
 
   private final ReadingsRepository readingRepository;
   private final PlantRepository plantRepository;
+  private final UserRepository userRepository;
+  private final NotificationService notificationService;
 
-  // inject both repositories
-  public SensorDataService(ReadingsRepository readingsRepository, PlantRepository plantRepository) {
+  public SensorDataService(
+      ReadingsRepository readingsRepository,
+      PlantRepository plantRepository,
+      UserRepository userRepository,
+      NotificationService notificationService) {
     this.readingRepository = readingsRepository;
     this.plantRepository = plantRepository;
+    this.userRepository = userRepository;
+    this.notificationService = notificationService;
   }
 
   public void validateSensorData(SensorData data) {
@@ -50,6 +60,12 @@ public class SensorDataService {
         .orElseThrow(() -> new DeviceNotPairedException(
             "No plant is paired with device " + deviceId));
 
+    // Fetch the previous reading before saving the new one so the next query
+    // compares against the reading immediately before this one.
+    ReadingEntity previousReading = readingRepository
+        .findTopByPlantEntity_PlantIdOrderByRecordedAtDesc(plant.getPlantId())
+        .orElse(null);
+
     ReadingEntity reading = new ReadingEntity();
     reading.setPlantEntity(plant);
     reading.setDeviceId(plant.getDeviceId());
@@ -58,7 +74,55 @@ public class SensorDataService {
     reading.setRecordedAt(OffsetDateTime.now());
     readingRepository.save(reading);
 
+    try {
+      notifyIfLowMoisture(plant, reading, previousReading);
+    } catch (RuntimeException e) {
+      // Notification problems must never fail the sensor request.
+      log.error("Could not queue low-moisture notification for plant {}",
+          plant.getPlantId(), e);
+    }
+
     log.debug("Saved reading for plant {} from device {}", plant.getPlantId(), deviceId);
+  }
+
+  private void notifyIfLowMoisture(
+      PlantEntity plant,
+      ReadingEntity reading,
+      ReadingEntity previousReading) {
+
+    Integer minMoisture = plant.getMinMoistureLevel();
+    if (minMoisture == null) {
+      return;
+    }
+
+    int currentPercent = reading.getMoisturePercent();
+    if (currentPercent >= minMoisture) {
+      return;
+    }
+
+    boolean wasAlreadyLow = previousReading != null
+        && previousReading.getMoisturePercent() < minMoisture;
+    if (wasAlreadyLow) {
+      return;
+    }
+
+    List<String> recipients = userRepository.findByHousehold(plant.getHousehold())
+        .stream()
+        .map(UserEntity::getEmail)
+        .filter(email -> email != null && !email.isBlank())
+        .toList();
+
+    if (recipients.isEmpty()) {
+      log.warn("No household email recipients for plant {}", plant.getPlantId());
+      return;
+    }
+
+    notificationService.sendLowMoistureEmail(
+        recipients,
+        plant.getNickname(),
+        currentPercent,
+        minMoisture,
+        reading.getRecordedAt());
   }
 
   /**

@@ -16,6 +16,9 @@ import java.time.OffsetDateTime;
 @Table(name = "readings")
 public class ReadingEntity {
 
+  private static final int DRY_RAW = 200;
+  private static final int WET_RAW = 2000;
+
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   @Column(name = "reading_id", nullable = false)
@@ -68,6 +71,11 @@ public class ReadingEntity {
 
   public void setMoisture_reading(Integer moisture_reading) {
     this.moisture_reading = moisture_reading;
+  }
+
+  public int getMoisturePercent() {
+    int clamped = Math.max(DRY_RAW, Math.min(WET_RAW, moisture_reading));
+    return (int) Math.round((clamped - DRY_RAW) * 100.0 / (WET_RAW - DRY_RAW));
   }
 
   public String getDeviceId() {

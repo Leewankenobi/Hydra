@@ -28,8 +28,6 @@ import org.slf4j.LoggerFactory;
 public class PlantService {
 
   private static final long MAX_IMAGE_SIZE = 7 * 1024 * 1024;
-  private static final int DRY_RAW = 200;
-  private static final int WET_RAW = 2000;
   private static final Logger log = LoggerFactory.getLogger(PlantService.class);
 
   private static final Set<String> ALLOWED_IMAGE_TYPES = Set.of(
@@ -135,7 +133,7 @@ public class PlantService {
           .findTopByPlantEntity_PlantIdOrderByRecordedAtDesc(plant.getPlantId())
           .ifPresent(reading -> {
             data.setLatestMoisture(reading.getMoisture_reading());
-            data.setLatestMoisturePercent(toPercent(reading.getMoisture_reading()));
+            data.setLatestMoisturePercent(reading.getMoisturePercent());
             data.setLatestRecordedAt(reading.getRecordedAt());
           });
 
@@ -147,11 +145,6 @@ public class PlantService {
 
 
   // --------- Helpers --------- //
-
-  private static int toPercent(int raw) {
-    int clamped = Math.max(DRY_RAW, Math.min(WET_RAW, raw));
-    return (int) Math.round((clamped - DRY_RAW) * 100.0 / (WET_RAW - DRY_RAW));
-  }
 
   private void cleanUpImage(String key) {
     try {
