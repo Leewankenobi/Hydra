@@ -295,7 +295,7 @@ function getSaveErrorMessage(status) {
   }
 
   if (status === 409) {
-    return "A plant with these details already exists.";
+    return "This sensor is already paired with another plant.";
   }
 
   return "The plant could not be saved. Please try again.";

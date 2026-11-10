@@ -16,6 +16,11 @@ const plantsLoading = document.getElementById("plants-loading");
 const plantsEmpty = document.getElementById("plants-empty");
 const plantsError = document.getElementById("plants-error");
 
+const PLANTS_REFRESH_INTERVAL_MS = 20_000;
+
+// Reuse the first presigned image URL so polling does not reload the images.
+const imageUrlCache = new Map();
+
 // click listener for the my plants tab
 plantsTab.addEventListener("click", () => {
   plantsView.hidden = false;
@@ -31,16 +36,34 @@ householdTab.addEventListener("click", () => {
   plantsView.hidden = true;
 })
 
-function getMoistureStatus(plant) {
-  if (plant.currentMoisture == null) {
-    return "Moisture reading unavailable";
+function getCachedImageUrl(plant) {
+  if (!plant.imageUrl) {
+    return null;
   }
 
-  if (plant.currentMoisture < plant.minMoistureLevel) {
+  if (!imageUrlCache.has(plant.plantId)) {
+    imageUrlCache.set(plant.plantId, plant.imageUrl);
+  }
+
+  return imageUrlCache.get(plant.plantId);
+}
+
+function getMoistureStatus(plant) {
+  const percent = plant.latestMoisturePercent;
+
+  if (percent == null) {
+    return "Waiting for first reading";
+  }
+
+  if (plant.minMoistureLevel == null || plant.maxMoistureLevel == null) {
+    return "Thresholds not set";
+  }
+
+  if (percent < plant.minMoistureLevel) {
     return "Needs watering";
   }
 
-  if (plant.currentMoisture > plant.maxMoistureLevel) {
+  if (percent > plant.maxMoistureLevel) {
     return "Too much moisture";
   }
 
@@ -54,9 +77,11 @@ function createPlantCard(plant) {
   const imageContainer = document.createElement("div");
   imageContainer.className = "plant-card-image";
 
-  if (plant.imageUrl) {
+  const imageUrl = getCachedImageUrl(plant);
+
+  if (imageUrl) {
     const image = document.createElement("img");
-    image.src = plant.imageUrl;
+    image.src = imageUrl;
     image.alt = `${plant.nickname} plant`;
     image.loading = "lazy";
     image.addEventListener("error", () => {
@@ -77,15 +102,24 @@ function createPlantCard(plant) {
 
   const moisture = document.createElement("p");
   moisture.className = "plant-moisture";
+  const percent = plant.latestMoisturePercent;
+  const raw = plant.latestMoisture;
   moisture.innerHTML = `Current moisture: <strong>${
-    plant.currentMoisture == null ? "--" : `${plant.currentMoisture}%`
-  }</strong>`;
+    percent == null ? "--" : `${percent}%`
+  }</strong>${raw == null ? "" : ` (raw ${raw})`}`;
 
   const status = document.createElement("p");
   status.className = "plant-status";
   status.textContent = getMoistureStatus(plant);
 
-  content.append(name, moisture, status);
+  const recorded = document.createElement("p");
+  recorded.className = "plant-reading-time";
+  const recordedAt = plant.latestRecordedAt ? new Date(plant.latestRecordedAt) : null;
+  recorded.textContent = recordedAt && !Number.isNaN(recordedAt.getTime())
+    ? `Recorded: ${recordedAt.toLocaleTimeString()}`
+    : "No readings yet";
+
+  content.append(name, moisture, status, recorded);
   card.append(imageContainer, content);
   return card;
 }
@@ -100,8 +134,10 @@ function renderPlants(plants) {
   plantsEmpty.hidden = plants.length !== 0;
 }
 
-async function loadPlants() {
-  plantsLoading.hidden = false;
+async function loadPlants(showLoading = true) {
+  if (showLoading) {
+    plantsLoading.hidden = false;
+  }
   plantsEmpty.hidden = true;
   plantsError.hidden = true;
 
@@ -124,16 +160,25 @@ async function loadPlants() {
     const plants = await response.json();
     renderPlants(plants);
   } catch (error) {
-    plantCardContainer.replaceChildren();
-    plantsError.textContent = "Could not load your plants. Please try again.";
+    if (showLoading) {
+      plantCardContainer.replaceChildren();
+      plantsError.textContent = "Could not load your plants. Please try again.";
+    } else {
+      plantsError.textContent = "Could not refresh readings; retrying...";
+    }
     plantsError.hidden = false;
     console.error(error);
   } finally {
-    plantsLoading.hidden = true;
+    if (showLoading) {
+      plantsLoading.hidden = true;
+    }
   }
 }
 
 loadPlants();
 
-
-
+setInterval(() => {
+  if (!document.hidden) {
+    loadPlants(false);
+  }
+}, PLANTS_REFRESH_INTERVAL_MS);

@@ -1,5 +1,6 @@
 package com.example.hydra.dto;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 public class PlantData {
@@ -12,6 +13,9 @@ public class PlantData {
   private Integer maxMoistureLevel;
   private String deviceId;
   private String imageUrl; // not key!
+  private Integer latestMoisture; // raw 200-2000
+  private Integer latestMoisturePercent; // 0-100
+  private OffsetDateTime latestRecordedAt;
 
   public PlantData() {}
 
@@ -97,5 +101,29 @@ public class PlantData {
 
   public void setImageUrl(String imageUrl) {
     this.imageUrl = imageUrl;
+  }
+
+  public Integer getLatestMoisture() {
+    return latestMoisture;
+  }
+
+  public void setLatestMoisture(Integer latestMoisture) {
+    this.latestMoisture = latestMoisture;
+  }
+
+  public Integer getLatestMoisturePercent() {
+    return latestMoisturePercent;
+  }
+
+  public void setLatestMoisturePercent(Integer latestMoisturePercent) {
+    this.latestMoisturePercent = latestMoisturePercent;
+  }
+
+  public OffsetDateTime getLatestRecordedAt() {
+    return latestRecordedAt;
+  }
+
+  public void setLatestRecordedAt(OffsetDateTime latestRecordedAt) {
+    this.latestRecordedAt = latestRecordedAt;
   }
 }

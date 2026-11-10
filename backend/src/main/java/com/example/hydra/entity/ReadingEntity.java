@@ -32,6 +32,12 @@ public class ReadingEntity {
   @Column(name = "moisture_reading", nullable = false)
   private Integer moisture_reading; 
 
+  @Column(name = "device_id", nullable = false)
+  private String deviceId;
+
+  @Column(name = "temperature")
+  private Double temperature;
+
   public UUID getReading_id() {
     return reading_id;
   }
@@ -64,11 +70,29 @@ public class ReadingEntity {
     this.moisture_reading = moisture_reading;
   }
 
+  public String getDeviceId() {
+    return deviceId;
+  }
+
+  public void setDeviceId(String deviceId) {
+    this.deviceId = deviceId;
+  }
+
+  public Double getTemperature() {
+    return temperature;
+  }
+
+  public void setTemperature(Double temperature) {
+    this.temperature = temperature;
+  }
+
   public String toString() {
     return " Reading ID: " + getReading_id() +
      " Plant ID: " + getPlantEntity().getPlantId() + 
+     " Device ID: " + getDeviceId() +
      " Recorded at: " + getRecordedAt() + 
-     " Moisture Reading: " + getMoisture_reading();
+     " Moisture Reading: " + getMoisture_reading() +
+     " Temperature: " + getTemperature();
   }
 }
  

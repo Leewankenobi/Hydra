@@ -1,10 +1,7 @@
 package com.example.hydra.service;
 
-import java.io.IOException;
 import java.util.Set;
 import java.util.UUID;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +18,9 @@ import com.example.hydra.entity.HouseholdEntity;
 import com.example.hydra.entity.PlantEntity;
 import com.example.hydra.dto.PlantData;
 import com.example.hydra.repository.PlantRepository;
+import com.example.hydra.repository.ReadingsRepository;
 import com.example.hydra.service.ImageService;
+import com.example.hydra.util.DeviceIds;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +29,9 @@ import org.slf4j.LoggerFactory;
 public class PlantService {
 
   private static final long MAX_IMAGE_SIZE = 7 * 1024 * 1024;
-   private static final Logger log = LoggerFactory.getLogger(PlantService.class);
+  private static final int DRY_RAW = 200;
+  private static final int WET_RAW = 2000;
+  private static final Logger log = LoggerFactory.getLogger(PlantService.class);
 
   private static final Set<String> ALLOWED_IMAGE_TYPES = Set.of(
     "image/jpeg",
@@ -38,11 +39,17 @@ public class PlantService {
     "image/webp");
 
   private final PlantRepository plantRepository;
+  private final ReadingsRepository readingsRepository;
   private final UserService userService;
   private final ImageService imageService;
 
-  public PlantService(PlantRepository plantRepository, UserService userService, ImageService imageService) {
+  public PlantService(
+      PlantRepository plantRepository,
+      ReadingsRepository readingsRepository,
+      UserService userService,
+      ImageService imageService) {
     this.plantRepository = plantRepository;
+    this.readingsRepository = readingsRepository;
     this.userService = userService;
     this.imageService = imageService;
   }
@@ -51,6 +58,17 @@ public class PlantService {
 
     validatePlantRequest(plantRequest, userId);
     validatePlantImage(plantImage);
+
+    String deviceId = DeviceIds.normalize(plantRequest.getDeviceId());
+
+    // Reject duplicate pairings before uploading the image, otherwise a rejected
+    // request could leave an orphan object in Filebase.
+    if (plantRepository.existsByDeviceId(deviceId)) {
+      throw new ResponseStatusException(
+          HttpStatus.CONFLICT,
+          "This sensor is already paired with another plant"
+      );
+    }
 
     // save to household  
     PlantEntity plantEntity = new PlantEntity();
@@ -63,7 +81,7 @@ public class PlantService {
 
     plantEntity.setMinMoistureLevel(plantRequest.getMinMoistureLevel());
     plantEntity.setMaxMoistureLevel(plantRequest.getMaxMoistureLevel());
-    plantEntity.setDeviceId(plantRequest.getDeviceId());
+    plantEntity.setDeviceId(deviceId);
 
     // upload image and save key
     String key = imageService.uploadImage(plantImage);
@@ -114,6 +132,14 @@ public class PlantService {
         imageUrl
       );
 
+      readingsRepository
+          .findTopByPlantEntity_PlantIdOrderByRecordedAtDesc(plant.getPlantId())
+          .ifPresent(reading -> {
+            data.setLatestMoisture(reading.getMoisture_reading());
+            data.setLatestMoisturePercent(toPercent(reading.getMoisture_reading()));
+            data.setLatestRecordedAt(reading.getRecordedAt());
+          });
+
       result.add(data);
     }
 
@@ -122,6 +148,11 @@ public class PlantService {
 
 
   // --------- Helpers --------- //
+
+  private static int toPercent(int raw) {
+    int clamped = Math.max(DRY_RAW, Math.min(WET_RAW, raw));
+    return (int) Math.round((clamped - DRY_RAW) * 100.0 / (WET_RAW - DRY_RAW));
+  }
 
   private void cleanUpImage(String key) {
     try {

@@ -35,8 +35,8 @@ public class PlantEntity {
   @Column(name = "max_moisture_level")
   private Integer maxMoistureLevel;
   
-  //pico id - one pico/plant
-  @Column(name = "device_id", nullable = false)
+  // pico id - one pico/plant
+  @Column(name = "device_id", nullable = false, unique = true)
   private String deviceId;
 
   @Column(name = "image_key")

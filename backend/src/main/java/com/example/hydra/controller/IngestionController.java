@@ -1,8 +1,11 @@
 package com.example.hydra.controller;
 
 import com.example.hydra.dto.SensorData;
+import com.example.hydra.exception.DeviceNotPairedException;
 import com.example.hydra.service.SensorDataService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,16 +13,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController  
+@RestController
 /**
  * Handles incoming API requests from Sensor
  * IngestionController
  */
 public class IngestionController {
 
+  private static final Logger log = LoggerFactory.getLogger(IngestionController.class);
+
   private final SensorDataService sensorDataService; // one service through out app lifecycle
 
-  public IngestionController (SensorDataService sensorDataService) {
+  public IngestionController(SensorDataService sensorDataService) {
     this.sensorDataService = sensorDataService;
   }
 
@@ -31,25 +36,28 @@ public class IngestionController {
    */
   public ResponseEntity<String> receiveReading(@RequestBody SensorData sensorData) {
     try {
-
-      System.out.println("Received payload: " + sensorData.toString());
+      log.debug("Received sensor payload: {}", sensorData);
       sensorDataService.validateSensorData(sensorData);
       sensorDataService.saveSensorData(sensorData);
-      return ResponseEntity.status(HttpStatus.OK).body("Saved Reading!");  
+      return ResponseEntity.status(HttpStatus.OK).body("Saved Reading!");
 
-    } catch (IllegalArgumentException e) { //400
-
+    } catch (IllegalArgumentException e) { // 400
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-      .body(e.getMessage()); 
+          .body(e.getMessage());
 
-    } catch (DataAccessException e) { //500
+    } catch (DeviceNotPairedException e) { // 404
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+          .body(e.getMessage());
+
+    } catch (DataAccessException e) { // 500
+      log.error("Database error while saving sensor reading", e);
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-      .body(e.getMessage());
+          .body("Could not save reading");
 
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-      .body(e.getMessage());
+    } catch (Exception e) { // 500
+      log.error("Unexpected error while saving sensor reading", e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Unexpected server error");
     }
-
   }
 }

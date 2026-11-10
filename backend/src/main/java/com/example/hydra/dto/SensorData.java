@@ -1,14 +1,12 @@
 package com.example.hydra.dto;
 
-import java.util.UUID;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 // Reading entity
 public class SensorData {
 
-  @JsonProperty("plant_id")
-  private UUID plantId;
+  @JsonProperty("device_id")
+  private String deviceId;
 
   @JsonProperty("moisture")
   private Integer moistureLevel;
@@ -19,12 +17,12 @@ public class SensorData {
   public SensorData() {
   }
 
-  public UUID getPlantId() {
-    return plantId;
+  public String getDeviceId() {
+    return deviceId;
   }
 
-  public void setPlantId(UUID plantId) {
-    this.plantId = plantId;
+  public void setDeviceId(String deviceId) {
+    this.deviceId = deviceId;
   }
 
   public Integer getMoistureLevel() {
@@ -43,7 +41,10 @@ public class SensorData {
     this.temperature = temperature;
   }
 
+  @Override
   public String toString() {
-    return " Plant ID: " + getPlantId() + " Mositure Level: " + getMoistureLevel() + " Temperature: " + temperature;
+    return "Device ID: " + deviceId
+        + " Moisture Level: " + moistureLevel
+        + " Temperature: " + temperature;
   }
-} 
+}

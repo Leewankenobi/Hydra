@@ -234,6 +234,12 @@ h2 {
   color: var(--sage-dark);
 }
 
+.plant-reading-time {
+  margin-top: 0.4rem;
+  color: var(--sage-dark);
+  font-size: 0.9rem;
+}
+
 .add-plant-button {
   margin: 0;
   background-color: var(--sage-dark);
