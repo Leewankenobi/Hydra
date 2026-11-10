@@ -6,10 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.hydra.dto.SensorData;
 import com.example.hydra.entity.PlantEntity;
 import com.example.hydra.entity.ReadingEntity;
-import com.example.hydra.exception.DeviceNotPairedException;
 import com.example.hydra.repository.ReadingsRepository;
 import com.example.hydra.repository.PlantRepository;
-import com.example.hydra.util.DeviceIds;
 
 import java.time.OffsetDateTime;
 
@@ -45,7 +43,7 @@ public class SensorDataService {
 
   @Transactional
   public void saveSensorData(SensorData data) {
-    String deviceId = DeviceIds.normalize(data.getDeviceId());
+    String deviceId = PlantEntity.normalizeDeviceId(data.getDeviceId());
 
     // The sensor identifies itself; the plant is resolved from the pairing.
     PlantEntity plant = plantRepository.findByDeviceId(deviceId)
@@ -60,6 +58,17 @@ public class SensorDataService {
     reading.setRecordedAt(OffsetDateTime.now());
     readingRepository.save(reading);
 
-    log.info("Saved reading for plant {} from device {}", plant.getPlantId(), deviceId);
+    log.debug("Saved reading for plant {} from device {}", plant.getPlantId(), deviceId);
+  }
+
+  /**
+   * The sensor's device is not paired with any plant. The controller maps this
+   * to a 404; it is a domain outcome, not a malformed request.
+   */
+  public static class DeviceNotPairedException extends RuntimeException {
+
+    public DeviceNotPairedException(String message) {
+      super(message);
+    }
   }
 }

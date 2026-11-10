@@ -16,8 +16,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.example.hydra.exception.DeviceNotPairedException;
 import com.example.hydra.service.SensorDataService;
+import com.example.hydra.service.SensorDataService.DeviceNotPairedException;
 
 @WebMvcTest(IngestionController.class)
 @ActiveProfiles("test")

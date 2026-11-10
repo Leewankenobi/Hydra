@@ -1,8 +1,8 @@
 package com.example.hydra.controller;
 
 import com.example.hydra.dto.SensorData;
-import com.example.hydra.exception.DeviceNotPairedException;
 import com.example.hydra.service.SensorDataService;
+import com.example.hydra.service.SensorDataService.DeviceNotPairedException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

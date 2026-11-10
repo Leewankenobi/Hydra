@@ -1,6 +1,7 @@
 package com.example.hydra.entity;
 
 import jakarta.persistence.*;
+import java.util.Locale;
 import java.util.UUID;
 
 @Entity
@@ -102,8 +103,16 @@ public class PlantEntity {
     return deviceId;
   }
 
+  /**
+   * Device IDs are case-insensitive. Keep the canonical form on the entity so
+   * pairing and ingestion cannot disagree only by case or whitespace.
+   */
+  public static String normalizeDeviceId(String deviceId) {
+    return deviceId == null ? null : deviceId.trim().toLowerCase(Locale.ROOT);
+  }
+
   public void setDeviceId(String deviceId) {
-    this.deviceId = deviceId;
+    this.deviceId = normalizeDeviceId(deviceId);
   }
 
   public void setImageKey(String key) {

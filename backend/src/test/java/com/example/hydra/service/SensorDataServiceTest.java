@@ -21,7 +21,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.example.hydra.dto.SensorData;
 import com.example.hydra.entity.PlantEntity;
 import com.example.hydra.entity.ReadingEntity;
-import com.example.hydra.exception.DeviceNotPairedException;
 import com.example.hydra.repository.PlantRepository;
 import com.example.hydra.repository.ReadingsRepository;
 
@@ -109,7 +108,7 @@ class SensorDataServiceTest {
     when(plantRepository.findByDeviceId("unknown-device")).thenReturn(Optional.empty());
 
     assertThatThrownBy(() -> sensorDataService.saveSensorData(data))
-        .isInstanceOf(DeviceNotPairedException.class)
+        .isInstanceOf(SensorDataService.DeviceNotPairedException.class)
         .hasMessageContaining("unknown-device");
 
     verifyNoInteractions(readingRepository);

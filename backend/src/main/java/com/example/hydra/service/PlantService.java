@@ -20,7 +20,6 @@ import com.example.hydra.dto.PlantData;
 import com.example.hydra.repository.PlantRepository;
 import com.example.hydra.repository.ReadingsRepository;
 import com.example.hydra.service.ImageService;
-import com.example.hydra.util.DeviceIds;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +58,7 @@ public class PlantService {
     validatePlantRequest(plantRequest, userId);
     validatePlantImage(plantImage);
 
-    String deviceId = DeviceIds.normalize(plantRequest.getDeviceId());
+    String deviceId = PlantEntity.normalizeDeviceId(plantRequest.getDeviceId());
 
     // Reject duplicate pairings before uploading the image, otherwise a rejected
     // request could leave an orphan object in Filebase.
