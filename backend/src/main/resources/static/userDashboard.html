@@ -9,8 +9,6 @@
   <body>
     <header>
       <h1>Hydra</h1>
-      <!--profile icon initials should be after logged in user-->
-      <div class = profile-icon>LZ</div>
     </header>
     <main>
        <nav class="tabs">
@@ -38,6 +36,42 @@
         </section>
     
     </main>
+
+    <dialog id="edit-plant-dialog" aria-labelledby="edit-plant-title">
+      <form id="edit-plant-form">
+        <h2 id="edit-plant-title">Edit plant</h2>
+
+        <label for="edit-nickname">Nickname</label>
+        <input type="text" id="edit-nickname" name="nickname" required>
+
+        <label for="edit-species">Species (optional)</label>
+        <input type="text" id="edit-species" name="species">
+
+        <label for="edit-plant-type">Environment</label>
+        <select id="edit-plant-type" name="plantType" required>
+          <option value="INDOOR">Indoor</option>
+          <option value="OUTDOOR">Outdoor</option>
+        </select>
+
+        <label for="edit-min-moisture">Minimum moisture (%)</label>
+        <input type="number" id="edit-min-moisture" name="minMoistureLevel" min="0" max="100" required>
+
+        <label for="edit-max-moisture">Maximum moisture (%)</label>
+        <input type="number" id="edit-max-moisture" name="maxMoistureLevel" min="0" max="100" required>
+
+        <label for="edit-device-id">Sensor device ID</label>
+        <input type="text" id="edit-device-id" name="deviceId" required>
+        <p class="field-help">Changing this stops readings until the sensor is reconfigured with the new ID.</p>
+
+        <p id="edit-plant-error" class="form-error" role="alert" hidden></p>
+
+        <div class="dialog-actions">
+          <button type="button" id="edit-cancel">Cancel</button>
+          <button type="submit" id="edit-save">Save changes</button>
+        </div>
+      </form>
+    </dialog>
+
     <script type = "module" src = "js/userdashboard.js"> </script>
   </body>
    </html>

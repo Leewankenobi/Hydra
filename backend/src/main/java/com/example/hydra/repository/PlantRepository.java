@@ -14,6 +14,8 @@ public interface PlantRepository extends JpaRepository<PlantEntity, UUID> {
 
   List<PlantEntity> findByHousehold(HouseholdEntity household);
 
+  Optional<PlantEntity> findByPlantIdAndHousehold(UUID plantId, HouseholdEntity household);
+
   Optional<PlantEntity> findByDeviceId(String deviceId);
 
   boolean existsByDeviceId(String deviceId);

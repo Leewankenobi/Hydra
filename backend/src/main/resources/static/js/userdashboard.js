@@ -16,10 +16,23 @@ const plantsLoading = document.getElementById("plants-loading");
 const plantsEmpty = document.getElementById("plants-empty");
 const plantsError = document.getElementById("plants-error");
 
+const editDialog = document.getElementById("edit-plant-dialog");
+const editForm = document.getElementById("edit-plant-form");
+const editError = document.getElementById("edit-plant-error");
+const editNickname = document.getElementById("edit-nickname");
+const editSpecies = document.getElementById("edit-species");
+const editPlantType = document.getElementById("edit-plant-type");
+const editMinMoisture = document.getElementById("edit-min-moisture");
+const editMaxMoisture = document.getElementById("edit-max-moisture");
+const editDeviceId = document.getElementById("edit-device-id");
+const editSaveButton = document.getElementById("edit-save");
+
 const PLANTS_REFRESH_INTERVAL_MS = 20_000;
 
 // Reuse the first presigned image URL so polling does not reload the images.
 const imageUrlCache = new Map();
+
+let editingPlantId = null;
 
 // click listener for the my plants tab
 plantsTab.addEventListener("click", () => {
@@ -70,6 +83,140 @@ function getMoistureStatus(plant) {
   return "Well hydrated";
 }
 
+function showEditError(message) {
+  editError.textContent = message;
+  editError.hidden = false;
+}
+
+function openEditDialog(plant) {
+  editingPlantId = plant.plantId;
+  editNickname.value = plant.nickname ?? "";
+  editSpecies.value = plant.species ?? "";
+  editPlantType.value = plant.plantType ?? "";
+  editMinMoisture.value = plant.minMoistureLevel ?? "";
+  editMaxMoisture.value = plant.maxMoistureLevel ?? "";
+  editDeviceId.value = plant.deviceId ?? "";
+  editError.textContent = "";
+  editError.hidden = true;
+  editDialog.showModal();
+}
+
+async function deletePlant(plant) {
+  const confirmed = window.confirm(
+    `Delete "${plant.nickname}"? Its readings and image will also be deleted.`
+  );
+  if (!confirmed) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`http://localhost:8080/api/plants/${plant.plantId}`, {
+      method: "DELETE",
+      mode: "cors",
+      credentials: "include"
+    });
+
+    if (response.status === 401) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    if (response.status === 404) {
+      await loadPlants(false);
+      return;
+    }
+
+    if (response.status === 502) {
+      plantsError.textContent =
+        "The plant image could not be deleted. The plant was not deleted. Please try again.";
+      plantsError.hidden = false;
+      return;
+    }
+
+    if (!response.ok) {
+      throw new Error(`Could not delete plant (${response.status})`);
+    }
+
+    await loadPlants(false);
+  } catch (error) {
+    plantsError.textContent = "Could not delete the plant. Please try again.";
+    plantsError.hidden = false;
+    console.error(error);
+  }
+}
+
+editForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  if (!editingPlantId) {
+    return;
+  }
+
+  editSaveButton.disabled = true;
+  editError.hidden = true;
+
+  const payload = {
+    nickname: editNickname.value.trim(),
+    species: editSpecies.value.trim(),
+    plantType: editPlantType.value,
+    minMoistureLevel: Number(editMinMoisture.value),
+    maxMoistureLevel: Number(editMaxMoisture.value),
+    deviceId: editDeviceId.value.trim()
+  };
+
+  try {
+    const response = await fetch(`http://localhost:8080/api/plants/${editingPlantId}`, {
+      method: "PUT",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (response.status === 401) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    if (response.status === 400) {
+      showEditError("Check the plant details and moisture levels.");
+      return;
+    }
+
+    if (response.status === 404) {
+      showEditError("This plant no longer exists.");
+      return;
+    }
+
+    if (response.status === 409) {
+      showEditError("That device ID is already paired with another plant.");
+      return;
+    }
+
+    if (!response.ok) {
+      throw new Error(`Could not update plant (${response.status})`);
+    }
+
+    editDialog.close();
+    await loadPlants(false);
+  } catch (error) {
+    showEditError("Could not update the plant. Please try again.");
+    console.error(error);
+  } finally {
+    editSaveButton.disabled = false;
+  }
+});
+
+document.getElementById("edit-cancel").addEventListener("click", () => {
+  editDialog.close();
+});
+
+editDialog.addEventListener("close", () => {
+  editingPlantId = null;
+});
+
 function createPlantCard(plant) {
   const card = document.createElement("article");
   card.className = "plant-card";
@@ -119,7 +266,24 @@ function createPlantCard(plant) {
     ? `Recorded: ${recordedAt.toLocaleTimeString()}`
     : "No readings yet";
 
-  content.append(name, moisture, status, recorded);
+  const actions = document.createElement("div");
+  actions.className = "plant-card-actions";
+
+  const editButton = document.createElement("button");
+  editButton.type = "button";
+  editButton.className = "plant-card-button";
+  editButton.textContent = "Edit";
+  editButton.addEventListener("click", () => openEditDialog(plant));
+
+  const deleteButton = document.createElement("button");
+  deleteButton.type = "button";
+  deleteButton.className = "plant-card-button delete-plant-button";
+  deleteButton.textContent = "Delete";
+  deleteButton.addEventListener("click", () => deletePlant(plant));
+
+  actions.append(editButton, deleteButton);
+
+  content.append(name, moisture, status, recorded, actions);
   card.append(imageContainer, content);
   return card;
 }

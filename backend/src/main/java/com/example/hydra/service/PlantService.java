@@ -19,6 +19,7 @@ import com.example.hydra.entity.PlantEntity;
 import com.example.hydra.dto.PlantData;
 import com.example.hydra.repository.PlantRepository;
 import com.example.hydra.repository.ReadingsRepository;
+import com.example.hydra.repository.WateringLogsRepository;
 import com.example.hydra.service.ImageService;
 
 import org.slf4j.Logger;
@@ -37,16 +38,19 @@ public class PlantService {
 
   private final PlantRepository plantRepository;
   private final ReadingsRepository readingsRepository;
+  private final WateringLogsRepository wateringLogsRepository;
   private final UserService userService;
   private final ImageService imageService;
 
   public PlantService(
       PlantRepository plantRepository,
       ReadingsRepository readingsRepository,
+      WateringLogsRepository wateringLogsRepository,
       UserService userService,
       ImageService imageService) {
     this.plantRepository = plantRepository;
     this.readingsRepository = readingsRepository;
+    this.wateringLogsRepository = wateringLogsRepository;
     this.userService = userService;
     this.imageService = imageService;
   }
@@ -143,15 +147,72 @@ public class PlantService {
     return result; 
   }
 
+  @Transactional
+  public void updatePlant(UUID plantId, PlantRequest plantRequest, UUID userId) {
+    validatePlantRequest(plantRequest, userId);
+
+    HouseholdEntity household = userService.getHouseholdForUser(userId);
+    PlantEntity plant = plantRepository.findByPlantIdAndHousehold(plantId, household)
+        .orElseThrow(() -> new ResponseStatusException(
+            HttpStatus.NOT_FOUND, "Plant not found"));
+
+    String deviceId = PlantEntity.normalizeDeviceId(plantRequest.getDeviceId());
+
+    plantRepository.findByDeviceId(deviceId)
+        .filter(existing -> !existing.getPlantId().equals(plantId))
+        .ifPresent(existing -> {
+          throw new ResponseStatusException(
+              HttpStatus.CONFLICT,
+              "This sensor is already paired with another plant");
+        });
+
+    plant.setNickname(plantRequest.getNickname().trim());
+    plant.setSpecies(plantRequest.getSpecies());
+    plant.setPlantType(plantRequest.getPlantType());
+    plant.setMinMoistureLevel(plantRequest.getMinMoistureLevel());
+    plant.setMaxMoistureLevel(plantRequest.getMaxMoistureLevel());
+    plant.setDeviceId(deviceId);
+
+    try {
+      plantRepository.saveAndFlush(plant);
+    } catch (DataIntegrityViolationException exception) {
+      throw new ResponseStatusException(
+          HttpStatus.CONFLICT,
+          "This sensor is already paired with another plant",
+          exception);
+    }
+  }
+
+  @Transactional
+  public void deletePlant(UUID plantId, UUID userId) {
+    HouseholdEntity household = userService.getHouseholdForUser(userId);
+    PlantEntity plant = plantRepository.findByPlantIdAndHousehold(plantId, household)
+        .orElseThrow(() -> new ResponseStatusException(
+            HttpStatus.NOT_FOUND, "Plant not found"));
+
+    String imageKey = plant.getImageKey();
+
+    // Delete the image before the database rows. If Filebase fails, the
+    // exception propagates and the transaction leaves the plant untouched.
+    if (imageKey != null && !imageKey.isBlank()) {
+      imageService.deleteImage(imageKey);
+    }
+
+    readingsRepository.deleteByPlantId(plantId);
+    wateringLogsRepository.deleteByPlantId(plantId);
+    plantRepository.delete(plant);
+    plantRepository.flush();
+  }
+
 
   // --------- Helpers --------- //
 
   private void cleanUpImage(String key) {
     try {
       imageService.deleteImage(key);
-    } catch (RuntimeException ignored) {
-      // best effort: the original save error matters more
-      }
+    } catch (RuntimeException e) {
+      log.warn("Could not delete image {}", key, e);
+    }
   }
 
   private void validatePlantRequest(PlantRequest plantRequest, UUID userId) {
