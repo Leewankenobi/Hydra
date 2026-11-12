@@ -1,6 +1,11 @@
 const joinCodeInput = document.getElementById("joinCode");
 const joinCodeError = document.getElementById("joinCodeError");
 
+const codeFromUrl = new URLSearchParams(window.location.search).get("code");
+if (codeFromUrl && /^\d{6}$/.test(codeFromUrl)) {
+  joinCodeInput.value = codeFromUrl;
+}
+
 document.getElementById("submitCode").addEventListener("click", async (event) => {
   event.preventDefault();
 

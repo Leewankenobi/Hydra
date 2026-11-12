@@ -55,6 +55,44 @@ public class UserController {
     return ResponseEntity.ok("Logged-in user: " + userId);
   }
 
+  @PutMapping("api/me")
+  public ResponseEntity<String> updateMe(
+      @RequestBody UpdateAccountRequest request,
+      HttpSession session) {
+
+    UUID userId = (UUID) session.getAttribute("userId");
+    if (userId == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+          .body("You are not logged in");
+    }
+
+    userService.updateAccount(
+        userId,
+        request.firstName(),
+        request.lastName(),
+        request.username()
+    );
+    return ResponseEntity.ok("Account updated");
+  }
+
+  @DeleteMapping("api/me")
+  public ResponseEntity<String> deleteMe(HttpSession session) {
+    UUID userId = (UUID) session.getAttribute("userId");
+    if (userId == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+          .body("You are not logged in");
+    }
+
+    userService.deleteAccount(userId);
+    session.invalidate();
+    return ResponseEntity.ok("Account deleted");
+  }
+
+  public record UpdateAccountRequest(
+      String firstName,
+      String lastName,
+      String username) {}
+
   // logout endpoint
   // user/me -> current user's data
 

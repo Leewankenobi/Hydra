@@ -16,6 +16,14 @@ const plantsLoading = document.getElementById("plants-loading");
 const plantsEmpty = document.getElementById("plants-empty");
 const plantsError = document.getElementById("plants-error");
 
+const householdName = document.getElementById("household-name");
+const householdInviteCode = document.getElementById("household-invite-code");
+const copyInviteCodeButton = document.getElementById("copy-invite-code");
+const joinHouseholdLink = document.getElementById("join-household-link");
+const membersLoading = document.getElementById("members-loading");
+const membersEmpty = document.getElementById("members-empty");
+const householdMembersError = document.getElementById("household-members-error");
+
 const editDialog = document.getElementById("edit-plant-dialog");
 const editForm = document.getElementById("edit-plant-form");
 const editError = document.getElementById("edit-plant-error");
@@ -27,12 +35,24 @@ const editMaxMoisture = document.getElementById("edit-max-moisture");
 const editDeviceId = document.getElementById("edit-device-id");
 const editSaveButton = document.getElementById("edit-save");
 
+const editAccountDialog = document.getElementById("edit-account-dialog");
+const editAccountForm = document.getElementById("edit-account-form");
+const editAccountError = document.getElementById("edit-account-error");
+const editAccountFirstName = document.getElementById("edit-account-first-name");
+const editAccountLastName = document.getElementById("edit-account-last-name");
+const editAccountUsername = document.getElementById("edit-account-username");
+const editAccountEmail = document.getElementById("edit-account-email");
+const editAccountSave = document.getElementById("edit-account-save");
+const deleteAccountButton = document.getElementById("delete-account-button");
+const deleteAccountNote = document.getElementById("delete-account-note");
+
 const PLANTS_REFRESH_INTERVAL_MS = 20_000;
 
 // Reuse the first presigned image URL so polling does not reload the images.
 const imageUrlCache = new Map();
 
 let editingPlantId = null;
+let householdData = null;
 
 // click listener for the my plants tab
 plantsTab.addEventListener("click", () => {
@@ -47,6 +67,7 @@ addPlantButton.addEventListener("click" , () => {
 householdTab.addEventListener("click", () => {
   householdView.hidden = false;
   plantsView.hidden = true;
+  loadHousehold();
 })
 
 function getCachedImageUrl(plant) {
@@ -216,6 +237,243 @@ document.getElementById("edit-cancel").addEventListener("click", () => {
 editDialog.addEventListener("close", () => {
   editingPlantId = null;
 });
+
+function showAccountError(message) {
+  editAccountError.textContent = message;
+  editAccountError.hidden = false;
+}
+
+function openAccountDialog(member) {
+  editAccountFirstName.value = member.firstName ?? "";
+  editAccountLastName.value = member.lastName ?? "";
+  editAccountUsername.value = member.username ?? "";
+  editAccountEmail.value = member.email ?? "";
+  editAccountError.textContent = "";
+  editAccountError.hidden = true;
+
+  const isOnlyMember = (householdData?.members?.length ?? 0) <= 1;
+  deleteAccountButton.disabled = isOnlyMember;
+  deleteAccountNote.hidden = !isOnlyMember;
+
+  editAccountDialog.showModal();
+}
+
+editAccountForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  editAccountSave.disabled = true;
+  editAccountError.hidden = true;
+
+  const payload = {
+    firstName: editAccountFirstName.value.trim(),
+    lastName: editAccountLastName.value.trim(),
+    username: editAccountUsername.value.trim()
+  };
+
+  try {
+    const response = await fetch("http://localhost:8080/api/me", {
+      method: "PUT",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (response.status === 401) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    if (response.status === 400) {
+      showAccountError("First name and last name are required.");
+      return;
+    }
+
+    if (response.status === 404) {
+      showAccountError("Your account no longer exists.");
+      return;
+    }
+
+    if (!response.ok) {
+      throw new Error(`Could not update account (${response.status})`);
+    }
+
+    editAccountDialog.close();
+    await loadHousehold();
+  } catch (error) {
+    showAccountError("Could not update your account. Please try again.");
+    console.error(error);
+  } finally {
+    editAccountSave.disabled = false;
+  }
+});
+
+document.getElementById("edit-account-cancel").addEventListener("click", () => {
+  editAccountDialog.close();
+});
+
+deleteAccountButton.addEventListener("click", async () => {
+  const confirmed = window.confirm(
+    "Delete your account? You will be logged out. The household and its plants will remain."
+  );
+  if (!confirmed) {
+    return;
+  }
+
+  deleteAccountButton.disabled = true;
+  editAccountError.hidden = true;
+
+  try {
+    const response = await fetch("http://localhost:8080/api/me", {
+      method: "DELETE",
+      mode: "cors",
+      credentials: "include"
+    });
+
+    if (response.status === 401) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    if (response.status === 409) {
+      showAccountError("You are the only member. Invite someone before deleting your account.");
+      deleteAccountNote.hidden = false;
+      deleteAccountButton.disabled = true;
+      return;
+    }
+
+    if (!response.ok) {
+      throw new Error(`Could not delete account (${response.status})`);
+    }
+
+    window.location.href = "login.html";
+  } catch (error) {
+    showAccountError("Could not delete your account. Please try again.");
+    deleteAccountButton.disabled = (householdData?.members?.length ?? 0) <= 1;
+    console.error(error);
+  }
+});
+
+copyInviteCodeButton.addEventListener("click", async () => {
+  if (householdData?.inviteCode == null) {
+    return;
+  }
+
+  const code = String(householdData.inviteCode);
+
+  if (navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(code);
+      copyInviteCodeButton.textContent = "Copied";
+      setTimeout(() => {
+        copyInviteCodeButton.textContent = "Copy invite code";
+      }, 1500);
+      return;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  window.prompt("Copy this invite code:", code);
+});
+
+async function loadHousehold() {
+  membersLoading.hidden = false;
+  membersEmpty.hidden = true;
+  householdMembersError.hidden = true;
+
+  try {
+    const response = await fetch("http://localhost:8080/api/households", {
+      method: "GET",
+      mode: "cors",
+      credentials: "include"
+    });
+
+    if (response.status === 401) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    if (!response.ok) {
+      throw new Error(`Could not load household (${response.status})`);
+    }
+
+    householdData = await response.json();
+    householdName.textContent = householdData.householdName || "Your household";
+    householdInviteCode.textContent = householdData.inviteCode ?? "------";
+    joinHouseholdLink.href = `joinHousehold.html?code=${encodeURIComponent(householdData.inviteCode ?? "")}`;
+    renderMembers(householdData.members);
+  } catch (error) {
+    householdMemberContainer.replaceChildren();
+    householdMembersError.textContent = "Could not load household members. Please try again.";
+    householdMembersError.hidden = false;
+    console.error(error);
+  } finally {
+    membersLoading.hidden = true;
+  }
+}
+
+function renderMembers(members) {
+  householdMemberContainer.replaceChildren();
+
+  const sorted = [...members].sort(
+    (a, b) => Number(b.currentUser) - Number(a.currentUser)
+  );
+
+  sorted.forEach((member) => {
+    householdMemberContainer.appendChild(createMemberCard(member));
+  });
+
+  membersEmpty.hidden = members.length !== 0;
+}
+
+function createMemberCard(member) {
+  const card = document.createElement("article");
+  card.className = "member-card";
+  if (member.currentUser) {
+    card.classList.add("current-member");
+  }
+
+  const details = document.createElement("div");
+  details.className = "member-details";
+
+  const name = document.createElement("h3");
+  name.textContent =
+    `${member.firstName ?? ""} ${member.lastName ?? ""}`.trim() || "Unnamed member";
+
+  const meta = document.createElement("p");
+  meta.className = "member-meta";
+  const metaParts = [];
+  if (member.username) {
+    metaParts.push(`@${member.username}`);
+  }
+  if (member.email) {
+    metaParts.push(member.email);
+  }
+  meta.textContent = metaParts.join(" · ");
+
+  details.append(name, meta);
+
+  if (member.currentUser) {
+    const badge = document.createElement("span");
+    badge.className = "member-badge";
+    badge.textContent = "You";
+    details.appendChild(badge);
+
+    const editButton = document.createElement("button");
+    editButton.type = "button";
+    editButton.className = "plant-card-button";
+    editButton.textContent = "Edit";
+    editButton.addEventListener("click", () => openAccountDialog(member));
+
+    card.append(details, editButton);
+  } else {
+    card.appendChild(details);
+  }
+
+  return card;
+}
 
 function createPlantCard(plant) {
   const card = document.createElement("article");

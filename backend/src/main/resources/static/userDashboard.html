@@ -28,11 +28,24 @@
         </section>
 
         <section id="view-household" hidden>
-          <!-- Household members -->
-        <div id="household-member-container"></div>
-        <p id="members-loading" hidden>Loading household memebers...</p>
-        <p id="members-empty" hidden>No members added yet. You can invite household members via the invite code above.</p>
-        <p id="household-members-error" hidden></p> <!-- other possible errors -->
+          <div class="household-heading">
+            <h2>My household</h2>
+            <p id="household-name" class="household-name"></p>
+          </div>
+
+          <div class="household-invite">
+            <p>Invite code: <strong id="household-invite-code">------</strong></p>
+            <div class="household-invite-actions">
+              <button id="copy-invite-code" class="plant-card-button" type="button">Copy invite code</button>
+              <a id="join-household-link" class="invite-link" href="joinHousehold.html" target="_blank" rel="noopener">Open join page</a>
+            </div>
+            <p class="field-help">Share this code with the person you want to add. They create their own account on the join page.</p>
+          </div>
+
+          <div id="household-member-container" class="member-list"></div>
+          <p id="members-loading" hidden>Loading household members...</p>
+          <p id="members-empty" hidden>No members found.</p>
+          <p id="household-members-error" hidden></p>
         </section>
     
     </main>
@@ -68,6 +81,41 @@
         <div class="dialog-actions">
           <button type="button" id="edit-cancel">Cancel</button>
           <button type="submit" id="edit-save">Save changes</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="edit-account-dialog" aria-labelledby="edit-account-title">
+      <form id="edit-account-form">
+        <h2 id="edit-account-title">My account</h2>
+
+        <label for="edit-account-first-name">First name</label>
+        <input type="text" id="edit-account-first-name" required>
+
+        <label for="edit-account-last-name">Last name</label>
+        <input type="text" id="edit-account-last-name" required>
+
+        <label for="edit-account-username">Username (optional)</label>
+        <input type="text" id="edit-account-username">
+
+        <label for="edit-account-email">Email</label>
+        <input type="email" id="edit-account-email" disabled>
+        <p class="field-help">Email cannot be changed here.</p>
+
+        <p id="edit-account-error" class="form-error" role="alert" hidden></p>
+
+        <div class="dialog-actions">
+          <button type="button" id="edit-account-cancel">Cancel</button>
+          <button type="submit" id="edit-account-save">Save changes</button>
+        </div>
+
+        <div class="account-danger-zone">
+          <h3>Delete my account</h3>
+          <p>Your plants and readings stay with the household. You will be logged out.</p>
+          <p id="delete-account-note" class="field-help" hidden>
+            You are the only member. Invite someone before deleting your account.
+          </p>
+          <button type="button" id="delete-account-button" class="danger-button">Delete my account</button>
         </div>
       </form>
     </dialog>

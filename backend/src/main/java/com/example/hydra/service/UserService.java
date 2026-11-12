@@ -7,9 +7,11 @@ import com.example.hydra.entity.UserEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
@@ -103,5 +105,54 @@ public class UserService {
             new ResponseStatusException(HttpStatus.NOT_FOUND,"User with such ID not found")
         );
     return user.getHousehold();
+  }
+
+  public List<UserEntity> getHouseholdMembers(UUID userId) {
+    HouseholdEntity household = getHouseholdForUser(userId);
+    return userRepository.findByHousehold(household);
+  }
+
+  public void updateAccount(
+      UUID userId,
+      String firstName,
+      String lastName,
+      String username) {
+
+    UserEntity user = userRepository.findById(userId)
+        .orElseThrow(() ->
+            new ResponseStatusException(HttpStatus.NOT_FOUND, "User with such ID not found")
+        );
+
+    if (firstName == null || firstName.isBlank() ||
+        lastName == null || lastName.isBlank()) {
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST,
+          "First name and last name are required"
+      );
+    }
+
+    user.setFirstName(firstName.trim());
+    user.setLastName(lastName.trim());
+    user.setUsername(username == null ? null : username.trim());
+    userRepository.saveAndFlush(user);
+  }
+
+  @Transactional
+  public void deleteAccount(UUID userId) {
+    UserEntity user = userRepository.findById(userId)
+        .orElseThrow(() ->
+            new ResponseStatusException(HttpStatus.NOT_FOUND, "User with such ID not found")
+        );
+
+    List<UserEntity> members = userRepository.findByHousehold(user.getHousehold());
+    if (members.size() <= 1) {
+      throw new ResponseStatusException(
+          HttpStatus.CONFLICT,
+          "Cannot delete the last household member"
+      );
+    }
+
+    userRepository.delete(user);
+    userRepository.flush();
   }
 }
