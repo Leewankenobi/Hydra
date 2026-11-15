@@ -64,4 +64,4 @@ while True:
     except Exception as e:
         print("POST failed:", e)
 
-    time.sleep(20)
+    time.sleep(7*60*60)
