@@ -19,7 +19,6 @@ import com.example.hydra.entity.PlantEntity;
 import com.example.hydra.dto.PlantData;
 import com.example.hydra.repository.PlantRepository;
 import com.example.hydra.repository.ReadingsRepository;
-import com.example.hydra.repository.WateringLogsRepository;
 import com.example.hydra.service.ImageService;
 
 import org.slf4j.Logger;
@@ -38,19 +37,16 @@ public class PlantService {
 
   private final PlantRepository plantRepository;
   private final ReadingsRepository readingsRepository;
-  private final WateringLogsRepository wateringLogsRepository;
   private final UserService userService;
   private final ImageService imageService;
 
   public PlantService(
       PlantRepository plantRepository,
       ReadingsRepository readingsRepository,
-      WateringLogsRepository wateringLogsRepository,
       UserService userService,
       ImageService imageService) {
     this.plantRepository = plantRepository;
     this.readingsRepository = readingsRepository;
-    this.wateringLogsRepository = wateringLogsRepository;
     this.userService = userService;
     this.imageService = imageService;
   }
@@ -199,7 +195,6 @@ public class PlantService {
     }
 
     readingsRepository.deleteByPlantId(plantId);
-    wateringLogsRepository.deleteByPlantId(plantId);
     plantRepository.delete(plant);
     plantRepository.flush();
   }

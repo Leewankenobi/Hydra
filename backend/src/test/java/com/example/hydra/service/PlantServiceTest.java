@@ -30,7 +30,6 @@ import com.example.hydra.entity.PlantEntity;
 import com.example.hydra.entity.ReadingEntity;
 import com.example.hydra.repository.PlantRepository;
 import com.example.hydra.repository.ReadingsRepository;
-import com.example.hydra.repository.WateringLogsRepository;
 
 @ExtendWith(MockitoExtension.class)
 class PlantServiceTest {
@@ -40,9 +39,6 @@ class PlantServiceTest {
 
   @Mock
   private ReadingsRepository readingsRepository;
-
-  @Mock
-  private WateringLogsRepository wateringLogsRepository;
 
   @Mock
   private UserService userService;
@@ -200,7 +196,6 @@ class PlantServiceTest {
 
     verify(imageService).deleteImage("image-key");
     verify(readingsRepository).deleteByPlantId(plantId);
-    verify(wateringLogsRepository).deleteByPlantId(plantId);
     verify(plantRepository).delete(plant);
     verify(plantRepository).flush();
   }
@@ -223,7 +218,6 @@ class PlantServiceTest {
             assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.BAD_GATEWAY));
 
     verifyNoInteractions(readingsRepository);
-    verifyNoInteractions(wateringLogsRepository);
     verify(plantRepository, never()).delete(any(PlantEntity.class));
     verify(plantRepository, never()).flush();
   }
@@ -243,7 +237,6 @@ class PlantServiceTest {
 
     verifyNoInteractions(imageService);
     verify(readingsRepository).deleteByPlantId(plantId);
-    verify(wateringLogsRepository).deleteByPlantId(plantId);
     verify(plantRepository).delete(plant);
     verify(plantRepository).flush();
   }
@@ -264,7 +257,6 @@ class PlantServiceTest {
 
     verifyNoInteractions(imageService);
     verifyNoInteractions(readingsRepository);
-    verifyNoInteractions(wateringLogsRepository);
     verify(plantRepository, never()).delete(any(PlantEntity.class));
   }
 
